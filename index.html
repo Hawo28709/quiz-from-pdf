@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLO1 Quiz Practice</title>
+    <style>
+      :root {
+        --bg: #0f1117;
+        --surface: #1a1d27;
+        --surface-2: #232734;
+        --border: #2e3346;
+        --text: #e2e4eb;
+        --text-dim: #8b8fa3;
+        --accent: #6c8aff;
+        --accent-2: #3d5afe;
+        --correct: #2e7d32;
+        --correct-bg: #1b3a1e;
+        --wrong: #c62828;
+        --wrong-bg: #3a1b1b;
+        --hint: #ffb300;
+        --hint-bg: #3a2e1b;
+        --radius: 10px;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(26, 29, 39, 0.96);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+        padding: 18px 24px;
+      }
+      h1 { margin: 0; font-size: 1.3rem; }
+      .subtitle, .meta-note { color: var(--text-dim); font-size: 0.9rem; }
+      .meta-note { margin-top: 6px; }
+      .toolbar {
+        margin-top: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .btn, .choice, .jump-btn {
+        transition: 0.15s ease;
+      }
+      .btn {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface-2);
+        color: var(--text);
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+      .btn:hover { border-color: var(--accent); color: var(--accent); }
+      .btn.active { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+      .score-wrap {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        color: var(--text-dim);
+        font-size: 0.85rem;
+      }
+      .progress-shell {
+        width: 150px;
+        height: 7px;
+        background: var(--bg);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        width: 0%;
+        height: 100%;
+        background: var(--accent);
+      }
+      main {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 22px 20px 72px;
+      }
+      .notice {
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--hint);
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 16px 18px;
+        margin-bottom: 22px;
+      }
+      .jump-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 22px;
+      }
+      .jump-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        color: var(--text-dim);
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .jump-btn.correct { border-color: var(--correct); background: var(--correct-bg); color: #4caf50; }
+      .jump-btn.wrong { border-color: var(--wrong); background: var(--wrong-bg); color: #ef5350; }
+      .card {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 18px;
+      }
+      .card.correct { border-color: var(--correct); }
+      .card.wrong { border-color: var(--wrong); }
+      .card-header {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .q-num {
+        color: var(--accent);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .badge {
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .badge.topic { background: #1c2440; color: #9fb1ff; }
+      .badge.multi { background: var(--hint-bg); color: var(--hint); }
+      .status { margin-left: auto; font-size: 0.82rem; font-weight: 700; }
+      .status.correct { color: var(--correct); }
+      .status.wrong { color: var(--wrong); }
+      .prompt { font-size: 0.98rem; white-space: pre-wrap; }
+      pre {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        padding: 14px;
+        border-radius: var(--radius);
+        overflow-x: auto;
+        font-size: 0.84rem;
+        line-height: 1.45;
+        color: #cdd1e0;
+      }
+      .choices { display: grid; gap: 9px; margin-top: 16px; }
+      .choice {
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        display: flex;
+        gap: 12px;
+        cursor: pointer;
+        color: #ffffff;
+      }
+      .choice:hover:not(.locked) { border-color: var(--accent); }
+      .choice.locked { cursor: default; }
+      .choice .letter { color: var(--accent); font-weight: 700; min-width: 22px; }
+      .choice.selected { border-color: var(--accent); background: #252a3a; }
+      .choice.correct-answer { border-color: var(--correct); background: var(--correct-bg); }
+      .choice.wrong-answer { border-color: var(--wrong); background: var(--wrong-bg); }
+      .choice.missed-answer { border-color: var(--hint); background: var(--hint-bg); }
+      .row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+      .hint { color: var(--text-dim); font-size: 0.82rem; }
+      .explanation {
+        margin-top: 16px;
+        padding: 14px 16px;
+        background: var(--bg);
+        border-left: 3px solid var(--accent);
+        border-radius: var(--radius);
+        display: none;
+        white-space: pre-wrap;
+        font-size: 0.9rem;
+      }
+      .explanation.show { display: block; }
+      @media (max-width: 700px) {
+        header { padding: 16px; }
+        main { padding: 16px 12px 56px; }
+        .card { padding: 18px 16px; }
+        .score-wrap { margin-left: 0; width: 100%; justify-content: space-between; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>MLO1 Quiz Practice</h1>
+      <div class="subtitle">Standalone study quiz based on your uploaded PDF.</div>
+      <div class="meta-note">43 questions were recovered cleanly. A few PDF items had scrambled text, so I left those out rather than guessing.</div>
+      <div class="toolbar">
+        <button class="btn" id="modeBtn">Study Mode</button>
+        <button class="btn" id="showAllBtn">Show All Explanations</button>
+        <button class="btn" id="resetBtn">Reset Progress</button>
+        <div class="score-wrap">
+          <span id="scoreText">0 / 0</span>
+          <div class="progress-shell"><div class="progress-bar" id="progressBar"></div></div>
+        </div>
+      </div>
+    </header>
+    <main>
+      <section class="notice">
+        <strong>Recovered question set:</strong> all questions shown here were rebuilt from your PDF plus the screenshots you provided.
+      </section>
+      <nav class="jump-nav" id="jumpNav"></nav>
+      <section id="quizRoot"></section>
+    </main>
+    <script>
+      const QUESTIONS = [
+        {
+          id: 1,
+          topic: "Recursion",
+          q: "Consider the following function.\n\nWhich of the following is output as a result of the call Repeat(27)?",
+          code: `void Repeat(int n)\n{\n    if (n >= 2)\n    {\n        Repeat(n / 3);\n    }\n    cout << n << " ";\n}`,
+          choices: ["27 9 3 1", "0 27", "0 1 3 9 27", "1 3 9 27"],
+          answer: 3,
+          explanation: "The recursion calls 27 -> 9 -> 3 -> 1, then prints while unwinding, so the output is 1 3 9 27."
+        },
+        {
+          id: 2,
+          topic: "OOP",
+          q: "When two or more classes serve as base class for a derived class, the situation is known as",
+          choices: ["multiple inheritance", "polymorphism", "encapsulation", "hierarchical inheritance"],
+          answer: 0,
+          explanation: "A derived class with more than one direct parent is multiple inheritance."
+        },
+        {
+          id: 3,
+          topic: "OOP",
+          q: "Which concept is often expressed by the phrase 'One interface, multiple methods'?",
+          choices: ["Inheritance", "Abstraction", "Polymorphism", "Encapsulation"],
+          answer: 2,
+          explanation: "Polymorphism means the same interface can produce different behavior."
+        },
+        {
+          id: 4,
+          topic: "Recursion",
+          q: "Which of the following is not true about a recursive method?",
+          choices: [
+            "It requires one or more base cases to stop recursion.",
+            "It requires an if-then-else or switch that can lead to a base case.",
+            "Recursive method is always faster than non-recursive method such as a simple loop.",
+            "Every recursive call reduces the original problem so it eventually becomes a base case."
+          ],
+          answer: 2,
+          explanation: "Recursion is not always faster. It often adds call overhead and can use more memory."
+        },
+        {
+          id: 5,
+          topic: "Trees",
+          q: "Which of the following is an incorrect description of a balanced binary tree?",
+          choices: [
+            "Binary tree provides an index to access the elements in the tree.",
+            "Data insertion requires O(log n) running time in the worst case.",
+            "Data deletion requires O(log n) running time in the worst case.",
+            "Data search requires O(log n) running time in the worst case."
+          ],
+          answer: 0,
+          explanation: "Trees are not index-based structures like arrays."
+        },
+        {
+          id: 6,
+          topic: "Java",
+          q: "The fields in an interface are implicitly specified as",
+          choices: ["private", "static only", "protected", "both static and final"],
+          answer: 3,
+          explanation: "Interface fields are implicitly public, static, and final. Among these choices, 'both static and final' is the best match."
+        },
+        {
+          id: 7,
+          topic: "Recursion",
+          q: "What is the output generated for printNum(123, 8)?",
+          code: `void printNum(int n, int base)\n{\n    cout << n MOD base;\n    if (n >= base)\n        printNum(n / base, base);\n}`,
+          choices: ["387", "173", "371", "321"],
+          answer: 2,
+          explanation: "123 % 8 = 3, 15 % 8 = 7, 1 % 8 = 1, so the function prints 371."
+        },
+        {
+          id: 8,
+          topic: "Stacks & Queues",
+          q: "The seven elements A, B, C, D, E, F and G are pushed onto a stack in reverse order, starting from G. The stack is popped five times and each popped item is inserted into a queue. Two elements are deleted from the queue and pushed back onto the stack. Now one element is popped from the stack. Which item is popped?",
+          choices: ["D", "B", "A", "C", "E", "F"],
+          answer: 1,
+          explanation: "After five pops the queue holds A, B, C, D, E. Dequeue A and B, then push them back in that order, leaving B on top."
+        },
+        {
+          id: 9,
+          topic: "Queues",
+          q: "What values would be returned after this sequence of queue operations?\n\nenqueue(4), enqueue(8), dequeue(), enqueue(98), enqueue(15), dequeue(), dequeue(), enqueue(5), enqueue(2), front()",
+          choices: ["4,8,98,98", "4,15,98,2", "4,8,98,5", "4,8,98,15"],
+          answer: 3,
+          explanation: "The three dequeue/front results are 4, then 8, then 98, and the final front is 15."
+        },
+        {
+          id: 10,
+          topic: "Exceptions",
+          q: "Which statement about exception handling is not true?",
+          choices: [
+            "We must declare a checked exception if the method might throw an exception.",
+            "Exception occurs during the compile time of a program.",
+            "Exception handling enables a method to throw an exception to its caller.",
+            "Various exception classes can be derived from a common superclass."
+          ],
+          answer: 1,
+          explanation: "Exceptions occur at runtime, not compile time."
+        },
+        {
+          id: 11,
+          topic: "Java",
+          q: "Which keyword is used to inherit properties from one class into another?",
+          choices: ["subclasses", "extends", "native", "all of the mentioned"],
+          answer: 1,
+          explanation: "Java uses the keyword extends for class inheritance."
+        },
+        {
+          id: 12,
+          topic: "Stacks",
+          q: "The best data structure to check whether an arithmetic expression has balanced parenthesis is a",
+          choices: ["Queue", "Stack", "Tree", "List"],
+          answer: 1,
+          explanation: "A stack is the standard structure for matching nested opening and closing parentheses."
+        },
+        {
+          id: 13,
+          topic: "Recursion",
+          q: "Which of the following is a benefit of recursive methods?",
+          choices: [
+            "In general, recursive method uses less resources than a simple loop.",
+            "Recursion enables us to write simple, clear solutions for inherently recursive problems.",
+            "In general, recursive method is faster than a simple loop.",
+            "Recursive method is always easier than a simple loop."
+          ],
+          answer: 1,
+          explanation: "The main benefit is expressiveness on naturally recursive problems."
+        },
+        {
+          id: 14,
+          topic: "OOP",
+          q: "In a typical high school, a teacher can teach multiple subjects and belong to different departments. What best describes the relationship of Teacher to Department?",
+          choices: ["Association", "Composition", "Inheritance", "Aggregation"],
+          answer: 3,
+          explanation: "A department has teachers associated with it, but teachers can still exist independently and may belong to multiple departments, which matches aggregation."
+        },
+        {
+          id: 15,
+          topic: "Linked Lists",
+          q: "Consider a singly linked list. Which operations depend on the length of the linked list?",
+          choices: [
+            "Delete the first item of the linked list",
+            "Add an item after the last item of the linked list",
+            "Delete the last item of the linked list",
+            "Add an item before the first item of the linked list"
+          ],
+          multiple: true,
+          answers: [1, 2],
+          explanation: "Without extra tail bookkeeping, reaching or deleting the last node requires traversal through the list."
+        },
+        {
+          id: 16,
+          topic: "OOP",
+          q: "Which statement about Object-Oriented Programming is not true?",
+          choices: [
+            "A constructor may invoke an overloaded constructor or its superclass's constructor.",
+            "A constructor is used to construct an instance of a class.",
+            "Constructors of a superclass are inherited in the subclass.",
+            "A static method can be inherited."
+          ],
+          answer: 2,
+          explanation: "Constructors are not inherited."
+        },
+        {
+          id: 17,
+          topic: "OOP",
+          q: "Which mechanisms are provided by object-oriented languages to implement the object-oriented model?",
+          choices: ["Inheritance", "Encapsulation", "Polymorphism", "All of the mentioned"],
+          answer: 3,
+          explanation: "Inheritance, encapsulation, and polymorphism are all core OOP mechanisms."
+        },
+        {
+          id: 18,
+          topic: "Java",
+          q: "What is the output of this program?",
+          code: `class Test {\n    int a;\n    public int b;\n    private int c;\n}\nclass AcessTest {\n    public static void main(String args[])\n    {\n        Test ob = new Test();\n        ob.a = 10;\n        ob.b = 20;\n        ob.c = 30;\n        System.out.println(" Output :a, b, and c" + ob.a + " " + ob.b + " " + ob.c);\n    }\n}`,
+          choices: ["None of the mentioned", "Run time error", "Compilation error", "Output : a, b and c 10 20 30"],
+          answer: 2,
+          explanation: "The line ob.c = 30 tries to access a private field from outside its class, so it does not compile."
+        },
+        {
+          id: 19,
+          topic: "Recursion",
+          q: "How many times will factorial be invoked for factorial(6) in the code below?",
+          code: `public static long factorial(int n){\n    if(n==1)\n        return 1;\n    else\n        return n*factorial(n-1);\n}`,
+          choices: ["6", "5", "8", "7"],
+          answer: 0,
+          explanation: "The calls are factorial(6), (5), (4), (3), (2), and (1), for a total of 6 calls."
+        },
+        {
+          id: 20,
+          topic: "OOP",
+          q: "Multiple inheritance means",
+          choices: [
+            "more classes inheriting from more super classes",
+            "None of the mentioned",
+            "one class inheriting from more super classes",
+            "more classes inheriting from one super class"
+          ],
+          answer: 2,
+          explanation: "Multiple inheritance means one class has more than one base class."
+        },
+        {
+          id: 21,
+          topic: "OOP",
+          q: "Which mechanism allows an object to acquire the properties of another object?",
+          choices: ["Polymorphism", "Abstraction", "Encapsulation", "Inheritance"],
+          answer: 3,
+          explanation: "Inheritance passes characteristics from a base class to a derived class."
+        },
+        {
+          id: 22,
+          topic: "OOP",
+          q: "Which one of the following is not true?",
+          choices: [
+            "An abstract class cannot have non-abstract methods",
+            "Abstract methods should be implemented in the derived class",
+            "A class must be qualified as abstract if it contains one abstract method",
+            "A class containing abstract methods is called an abstract class"
+          ],
+          answer: 0,
+          explanation: "Abstract classes may contain both abstract and non-abstract methods."
+        },
+        {
+          id: 23,
+          topic: "OOP",
+          q: "Which of the following is the functionality of data abstraction?",
+          choices: ["None of the mentioned", "Parallelism", "Reduce Complexity", "Binds together code and data"],
+          answer: 2,
+          explanation: "Abstraction hides unnecessary detail and reduces complexity."
+        },
+        {
+          id: 24,
+          topic: "OOP",
+          q: "Consider an example of Teacher and Student. What best describes the relationship of Student to Teacher?",
+          choices: ["Association", "Aggregation", "Inheritance", "Composition"],
+          answer: 0,
+          explanation: "Student and Teacher interact, but one is not a subtype or owned part of the other."
+        },
+        {
+          id: 25,
+          topic: "Java",
+          q: "Analyze the following block of code and select the appropriate output:",
+          code: `for(int i=1;i < 5;i++)\n{\n    if(i % 2 == 0)\n        System.out.print("Hello World " + i + "   ");\n}`,
+          choices: [
+            "Hello World 2 Hello World 4",
+            "Hello World 1 Hello World 2 Hello World 3 Hello World 4",
+            "Hello World 4 Hello World 3 Hello World 2 Hello World 1",
+            "Hello World 1 Hello World 3"
+          ],
+          answer: 0,
+          explanation: "Only even values of i are printed: 2 and 4."
+        },
+        {
+          id: 26,
+          topic: "Data Structures",
+          q: "Suppose you need to write a program that stores unordered non-duplicate elements. What data structure should you use?",
+          choices: ["array list", "linked list", "queue", "set"],
+          answer: 3,
+          explanation: "A set is designed to store unique elements."
+        },
+        {
+          id: 27,
+          topic: "Java",
+          q: "What will be printed as the output of the following program?",
+          code: `public class testincr\n{\n    public static void main(String args[])\n    {\n        int i = 0;\n        i = i++ + i;\n        System.out.println("I = " + i);\n    }\n}`,
+          choices: ["I = 3", "I = 2", "I = 1", "I = 0"],
+          answer: 2,
+          explanation: "The postfix increment contributes 0 to the expression, then i becomes 1, so the assignment results in 1."
+        },
+        {
+          id: 28,
+          topic: "Linked Lists",
+          q: "What does the following function do for a linked list with first node as head?",
+          code: `void fun1(struct node* head)\n{\n    if (head == NULL)\n        return;\n\n    fun1(head->next);\n    printf("%d ", head->data);\n}`,
+          choices: [
+            "Prints alternate nodes of Linked List",
+            "Prints alternate nodes in reverse order",
+            "Prints all nodes of linked lists",
+            "Prints all nodes of linked list in reverse order"
+          ],
+          answer: 3,
+          explanation: "The recursive call goes to the end first, then prints while unwinding, so the list is printed in reverse."
+        },
+        {
+          id: 29,
+          topic: "Exceptions",
+          q: "Which statements are correct about exception handling?",
+          choices: [
+            "All of the listed.",
+            "Exception occurs during program execution time.",
+            "It propagates error reporting up to the call stack of methods.",
+            "Exception handling codes are separated from regular code."
+          ],
+          answer: 0,
+          explanation: "Each listed statement is true, so 'All of the listed' is correct."
+        },
+        {
+          id: 30,
+          topic: "Interfaces",
+          q: "Which of the following is not true?",
+          choices: [
+            "A class implementing an interface must implement all methods of the interface.",
+            "An interface is a solution for multiple inheritance in Java.",
+            "An interface can implement another interface.",
+            "An interface can extend another interface."
+          ],
+          answer: 2,
+          explanation: "Interfaces extend other interfaces. They do not implement them."
+        },
+        {
+          id: 31,
+          topic: "Exceptions",
+          q: "Which of the following is true?",
+          choices: [
+            "A finally block is executed before the catch block but after the try block.",
+            "A finally block is executed only after the catch block is executed.",
+            "A finally block is executed only if an exception occurs.",
+            "A finally block is executed whether an exception is thrown or not."
+          ],
+          answer: 3,
+          explanation: "finally is intended to run regardless of whether an exception occurs."
+        },
+        {
+          id: 32,
+          topic: "Java",
+          q: "Which statement is not true in Java?",
+          choices: [
+            "A public member of a class can be accessed in all packages.",
+            "A private member of a class cannot be accessed from its derived class.",
+            "A private member of a class cannot be accessed by the methods of the same class.",
+            "A protected member of a class can be accessed from its derived class."
+          ],
+          answer: 2,
+          explanation: "Private members are accessible inside the same class."
+        },
+        {
+          id: 33,
+          topic: "Arrays",
+          q: "Given a two-dimensional matrix V with r rows and c columns stored in row-major order starting at address x, what is the address of V[i,j]?",
+          choices: ["x + (i*r + j)", "x + (i*c + j*r)", "x + (j*c + i)", "x + (i*c + j)"],
+          answer: 3,
+          explanation: "Row-major order stores c elements per row, so the offset is i*c + j."
+        },
+        {
+          id: 34,
+          topic: "OOP",
+          q: "Which of these is the functionality of encapsulation?",
+          choices: ["All of the mentioned", "Using single interface for general class of actions", "Reduce Complexity", "Binds together code and data"],
+          answer: 3,
+          explanation: "Encapsulation bundles data with the methods that operate on it."
+        },
+        {
+          id: 35,
+          topic: "Linked Lists",
+          q: "Which of the following is a correct description of a linked list data type?",
+          choices: [
+            "Linked list requires O(n) running time for data insertion/deletion in the worst case.",
+            "Linked list requires O(log n) running time for data search in the worst case.",
+            "Linked list is a fixed-size data structure.",
+            "Linked list provides an index to access the elements in the list."
+          ],
+          answer: 0,
+          explanation: "A linked list does not provide indexed access and is not fixed-size. Linear traversal can make worst-case insertion/deletion O(n)."
+        },
+        {
+          id: 36,
+          topic: "Stacks",
+          q: "Consider the following stack operations. After all operations finish, how many elements are present in the stack?\n\nPush(1); Pop(); Push(2); Push(3); Pop(); Push(4); Pop(); Pop(); Push(5);",
+          choices: ["1", "2", "3", "4"],
+          answer: 0,
+          explanation: "The stack returns to empty before the final Push(5), so the final size is 1."
+        },
+        {
+          id: 37,
+          topic: "Recursion",
+          q: "How many times is the symbol '#' printed by the call foo(4)?",
+          code: `void foo(int i) {\n    if (i > 1) {\n        foo(i / 2);\n        foo(i / 2);\n    }\n    cout << "#";\n}`,
+          choices: ["3", "4", "7", "8", "Something else"],
+          answer: 2,
+          explanation: "Let T(1)=1. Then T(2)=2*T(1)+1=3 and T(4)=2*T(2)+1=7."
+        },
+        {
+          id: 38,
+          topic: "Java",
+          q: "At a certain high school students receive letter grades based on the following scale:\n\n93 or above -> A\n84 to 92 inclusive -> B\n75 to 83 inclusive -> C\nBelow 75 -> F\n\nWhich code segments will assign the correct string to grade for a given integer score?",
+          code: `I. if (score >= 93)\n       grade = "A";\n   if (score >= 84 && score <= 92)\n       grade = "B";\n   if (score >= 75 && score <= 83)\n       grade = "C";\n   if (score < 75)\n       grade = "F";\n\nII. if (score >= 93)\n        grade = "A";\n    if (84 <= score <= 92)\n        grade = "B";\n    if (75 <= score <= 83)\n        grade = "C";\n    if (score < 75)\n        grade = "F";\n\nIII. if (score >= 93)\n         grade = "A";\n     else if (score >= 84)\n         grade = "B";\n     else if (score >= 75)\n         grade = "C";\n     else\n         grade = "F";`,
+          choices: ["I", "II", "III"],
+          multiple: true,
+          answers: [0, 2],
+          explanation: "I works because the ranges are disjoint. III works because the else-if chain handles the ranges in descending order. II is not valid logic in Java-style syntax because chained comparisons like 84 <= score <= 92 do not work that way."
+        },
+        {
+          id: 39,
+          topic: "Stacks",
+          q: "What is the value of the postfix expression 6 3 2 4 + - * ?",
+          choices: ["1", "40", "74", "-18", "18"],
+          answer: 3,
+          explanation: "2 4 + = 6, then 3 - 6 = -3, then 6 * -3 = -18."
+        },
+        {
+          id: 40,
+          topic: "Trees",
+          q: "Which is the binary search tree with postorder sequence 2, 4, 3, 7, 9, 8, 5?",
+          choices: [
+            "Root 5; left child 1 with children 2 and 4; right child 8 with children 7 and 9",
+            "Root 5; left child 3 with children 2 and 4; right child 8 with children 7 and 9",
+            "Root 5; left child 3 with children 2 and 4; right child 9 with children 7 and 8",
+            "Root 5; left child 3 with children 2 and 4; right child 7 with children 8 and 9"
+          ],
+          answer: 1,
+          explanation: "In postorder, the last element is the root, so 5 is the root. The left subtree is 2,4,3 and the right subtree is 7,9,8, which reconstructs the tree in choice B."
+        },
+        {
+          id: 41,
+          topic: "Sorting",
+          q: "If A[0..n-1] is an array with n elements and procedure Swap exchanges its arguments, the following code sorts A in descending order. If A initially contains n different elements sorted in ascending order, how many calls to Swap are made in total?",
+          code: `int j <- 0\nwhile (j < n - 1)\n    int k <- 0\n    while (k < n - j - 1)\n        if (A[k] < A[k + 1])\n            Swap(A[k], A[k + 1])\n        end if\n        k <- k + 1\n    end while\n    j <- j + 1\nend while`,
+          choices: ["n - 1", "n", "n(n - 1)/2", "(n - 1)(n - 2)", "n(n - 1)"],
+          answer: 2,
+          explanation: "This is bubble sort in the worst case for descending order. Starting from ascending order, every inversion must be swapped, and there are n(n - 1)/2 inversions."
+        },
+        {
+          id: 42,
+          topic: "Graphs",
+          q: "Which data structure is required for Breadth First Traversal on a graph?",
+          choices: ["Stack", "Array", "Queue", "Tree"],
+          answer: 2,
+          explanation: "Breadth-first traversal explores level by level, which is naturally implemented with a queue."
+        },
+        {
+          id: 43,
+          topic: "Complexity",
+          q: "What is the complexity of the following code in big-O notation? If more than one answer is correct, choose the smallest one.",
+          code: `for (int j = n; j > 0; j--) {\n    for (int k = 1; k < j; k = k + k) {\n        cout << j + k << " ";\n    }\n    cout << endl;\n}`,
+          choices: ["O(log n)", "O(n)", "O(n log n)", "O(n^2)", "O(2^n)"],
+          answer: 2,
+          explanation: "The inner loop is O(log j), and summing that over j from 1 to n gives O(n log n)."
+        },
+        {
+          id: 44,
+          topic: "Trees",
+          q: "The following integers are inserted into an empty binary search tree in this order:\n\n26, 20, 37, 31, 22, 18, 25, 29, 19\n\nWhich traversal of the tree would produce the output:\n\n26, 20, 37, 18, 22, 31, 19, 25, 29",
+          choices: ["Preorder", "Inorder", "Postorder", "Reverse postorder", "Level-by-level"],
+          answer: 4,
+          explanation: "That output visits the root first, then nodes level by level from left to right, which is a level-order traversal."
+        },
+        {
+          id: 45,
+          topic: "Complexity",
+          q: "What is the running time of the following code fragment?",
+          code: `for(int i = 0; i < 10; i++)\n    for(int j = 0; j < N; j++)\n        for(int k = N - 2; k > 0; k--)\n            cout << i << " " << j << endl;`,
+          choices: ["O(log N)", "O(N log N)", "O(N)", "O(N^2)", "O(N^3)"],
+          answer: 3,
+          explanation: "The outer loop is constant, while the j and k loops each contribute O(N), giving O(N^2)."
+        },
+        {
+          id: 46,
+          topic: "Arrays",
+          q: "Consider the following method. Which of the following describes what arrayMethod() does to the array nums?",
+          code: `public static void arrayMethod(int nums[])\n{\n    int j = 0;\n    int k = nums.length - 1;\n\n    while (j < k)\n    {\n        int x = nums[j];\n        nums[j] = nums[k];\n        nums[k] = x;\n        j++;\n        k--;\n    }\n}`,
+          choices: [
+            "The array nums is unchanged.",
+            "The first value in nums is copied to every location in the array.",
+            "The last value in nums is copied to every location in the array.",
+            "The method generates an ArrayIndexOutOfBoundsException.",
+            "The contents of the array nums are reversed."
+          ],
+          answer: 4,
+          explanation: "The code swaps the first and last elements, then moves inward until the whole array is reversed."
+        },
+        {
+          id: 47,
+          topic: "Pointers",
+          q: "Are there any dynamic memory management errors in the following code?",
+          code: `int *p = new int;\nint *q = new int;\nint *r;\n*p = 17;\nr = q;\n*q = 42;\np = q;\ndelete r;`,
+          choices: [
+            "No, there are no errors",
+            "Yes, a memory leak",
+            "Yes, misuse of a dangling pointer",
+            "Yes, both a memory leak and misuse of a dangling pointer",
+            "Yes, a dangling chad"
+          ],
+          answer: 1,
+          explanation: "The original memory assigned to p is lost when p is reassigned to q, so that first allocation leaks."
+        },
+        {
+          id: 48,
+          topic: "Stacks",
+          q: "When checking whether parentheses are balanced, what is the maximum number of parentheses that appear on the stack at any one time while analyzing the sequence (()(())(()))?",
+          choices: ["1", "2", "3", "4 or more"],
+          answer: 2,
+          explanation: "The maximum nesting depth in (()(())(())) is 3."
+        },
+        {
+          id: 49,
+          topic: "Recursion",
+          q: "Consider the following recursive method. What value is returned as a result of the call mystery(5)?",
+          code: `public static int mystery(int n)\n{\n    if (n == 0)\n        return 1;\n    else\n        return 3 * mystery(n - 1);\n}`,
+          choices: ["0", "3", "81", "243", "6561"],
+          answer: 3,
+          explanation: "Each recursive step multiplies by 3, starting from 1 at n = 0, so mystery(5) = 3^5 = 243."
+        },
+        {
+          id: 50,
+          topic: "Complexity",
+          q: "What is the running time of the following code fragment?",
+          code: `for(int i = 0; i < 10; i++)\n    for(int j = 0; j < N; j++)\n        for(int k = N - 2; k < N + 2; k++)\n            cout << i << " " << j << endl;`,
+          choices: ["O(log N)", "O(N log N)", "O(N)", "O(N^2)", "O(N^3)"],
+          answer: 2,
+          explanation: "The inner loop runs a constant number of times, so the total is linear in N."
+        }
+      ];
+      const state = { studyMode: false, showAllExplanations: false, answers: {} };
+      const quizRoot = document.getElementById("quizRoot");
+      const jumpNav = document.getElementById("jumpNav");
+      const scoreText = document.getElementById("scoreText");
+      const progressBar = document.getElementById("progressBar");
+      const modeBtn = document.getElementById("modeBtn");
+      const showAllBtn = document.getElementById("showAllBtn");
+      const resetBtn = document.getElementById("resetBtn");
+
+      function letters(index) {
+        return String.fromCharCode(65 + index);
+      }
+
+      function normalizeSelection(value) {
+        return Array.isArray(value) ? [...value].sort((a, b) => a - b) : value;
+      }
+
+      function isCorrect(question, value) {
+        if (question.multiple) {
+          const selected = normalizeSelection(value || []);
+          const expected = normalizeSelection(question.answers || []);
+          return selected.length === expected.length && selected.every((item, index) => item === expected[index]);
+        }
+        return value === question.answer;
+      }
+
+      function computeStats() {
+        let answered = 0;
+        let correct = 0;
+        for (const question of QUESTIONS) {
+          const entry = state.answers[question.id];
+          if (!entry || entry.value === undefined) continue;
+          answered += 1;
+          if (isCorrect(question, entry.value)) correct += 1;
+        }
+        return { answered, correct, total: QUESTIONS.length };
+      }
+
+      function updateScore() {
+        const { answered, correct, total } = computeStats();
+        scoreText.textContent = `${correct} / ${answered} answered correctly`;
+        progressBar.style.width = `${(answered / total) * 100}%`;
+      }
+
+      function renderJumpNav() {
+        jumpNav.innerHTML = "";
+        for (const question of QUESTIONS) {
+          const btn = document.createElement("button");
+          btn.className = "jump-btn";
+          btn.textContent = question.id;
+          const entry = state.answers[question.id];
+          if (entry && entry.value !== undefined) {
+            btn.classList.add(isCorrect(question, entry.value) ? "correct" : "wrong");
+          }
+          btn.addEventListener("click", () => {
+            document.getElementById(`q-${question.id}`).scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+          jumpNav.appendChild(btn);
+        }
+      }
+
+      function toggleChoice(question, index) {
+        const entry = state.answers[question.id];
+        if (question.multiple) {
+          const selected = new Set(entry?.selection || []);
+          if (selected.has(index)) selected.delete(index);
+          else selected.add(index);
+          state.answers[question.id] = { selection: [...selected].sort((a, b) => a - b) };
+        } else {
+          state.answers[question.id] = { selection: [index] };
+        }
+        render();
+      }
+
+      function submitQuestion(question) {
+        const entry = state.answers[question.id];
+        if (!entry) return;
+        state.answers[question.id] = {
+          value: question.multiple ? normalizeSelection(entry.selection || []) : entry.selection?.[0]
+        };
+        render();
+      }
+
+      function resetProgress() {
+        state.answers = {};
+        state.showAllExplanations = false;
+        showAllBtn.classList.remove("active");
+        render();
+      }
+
+      function render() {
+        renderJumpNav();
+        updateScore();
+        quizRoot.innerHTML = "";
+
+        for (const question of QUESTIONS) {
+          const entry = state.answers[question.id];
+          const locked = Boolean(entry?.value !== undefined);
+          const selected = locked ? (question.multiple ? entry.value || [] : [entry.value]) : entry?.selection || [];
+          const correct = locked && isCorrect(question, entry.value);
+
+          const card = document.createElement("article");
+          card.className = `card${locked ? (correct ? " correct" : " wrong") : ""}`;
+          card.id = `q-${question.id}`;
+
+          const header = document.createElement("div");
+          header.className = "card-header";
+          header.innerHTML = `
+            <span class="q-num">Question ${question.id}</span>
+            <span class="badge topic">${question.topic}</span>
+            ${question.multiple ? '<span class="badge multi">Multi-select</span>' : ""}
+            ${locked ? `<span class="status ${correct ? "correct" : "wrong"}">${correct ? "Correct" : "Incorrect"}</span>` : ""}
+          `;
+          card.appendChild(header);
+
+          const prompt = document.createElement("div");
+          prompt.className = "prompt";
+          prompt.textContent = question.q;
+          card.appendChild(prompt);
+
+          if (question.code) {
+            const pre = document.createElement("pre");
+            pre.textContent = question.code;
+            card.appendChild(pre);
+          }
+
+          const choices = document.createElement("div");
+          choices.className = "choices";
+
+          question.choices.forEach((choiceText, index) => {
+            const choice = document.createElement("button");
+            choice.type = "button";
+            choice.className = `choice${locked ? " locked" : ""}`;
+            const chosen = selected.includes(index);
+            const isCorrectChoice = question.multiple ? question.answers.includes(index) : question.answer === index;
+
+            if (!locked && chosen) choice.classList.add("selected");
+            if (locked) {
+              if (isCorrectChoice) choice.classList.add("correct-answer");
+              if (chosen && !isCorrectChoice) choice.classList.add("wrong-answer");
+              if (!chosen && isCorrectChoice && !correct) choice.classList.add("missed-answer");
+            }
+
+            choice.innerHTML = `<span class="letter">${letters(index)}</span><span>${choiceText}</span>`;
+            choice.addEventListener("click", () => {
+              if (!locked) toggleChoice(question, index);
+            });
+            choices.appendChild(choice);
+          });
+
+          card.appendChild(choices);
+
+          if (!locked) {
+            const row = document.createElement("div");
+            row.className = "row";
+
+            const submit = document.createElement("button");
+            submit.type = "button";
+            submit.className = "btn";
+            submit.textContent = question.multiple ? "Submit Answers" : "Submit Answer";
+            submit.disabled = !selected.length;
+            submit.addEventListener("click", () => submitQuestion(question));
+
+            const hint = document.createElement("div");
+            hint.className = "hint";
+            hint.textContent = question.multiple ? "Select all that apply, then submit." : "Pick one answer, then submit.";
+
+            row.appendChild(submit);
+            row.appendChild(hint);
+            card.appendChild(row);
+          }
+
+          const explanation = document.createElement("div");
+          explanation.className = `explanation${state.studyMode || state.showAllExplanations || locked ? " show" : ""}`;
+          explanation.textContent = question.explanation;
+          card.appendChild(explanation);
+
+          quizRoot.appendChild(card);
+        }
+      }
+
+      modeBtn.addEventListener("click", () => {
+        state.studyMode = !state.studyMode;
+        modeBtn.classList.toggle("active", state.studyMode);
+        modeBtn.textContent = state.studyMode ? "Study Mode On" : "Study Mode";
+        render();
+      });
+
+      showAllBtn.addEventListener("click", () => {
+        state.showAllExplanations = !state.showAllExplanations;
+        showAllBtn.classList.toggle("active", state.showAllExplanations);
+        render();
+      });
+
+      resetBtn.addEventListener("click", resetProgress);
+
+      render();
+    </script>
+  </body>
+</html>
