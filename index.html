@@ -217,11 +217,12 @@
   <body>
     <header>
       <h1>Exam Practice Hub</h1>
-      <div class="subtitle">Switch between MLO1, MLO2, AI quizzes, and AI study questions as we build your study bank.</div>
-      <div class="meta-note">MLO1 and MLO2 are live. The AI and AI - Study tabs are now wired in so we can load your quiz PDFs and chapter notes next.</div>
+      <div class="subtitle">Switch between MLO1, MLO2, MLO3, AI quizzes, and AI study questions as we build your study bank.</div>
+      <div class="meta-note">MLO1 and MLO2 are live. MLO3 is now wired in, and the AI tabs are ready for your quiz PDFs and study material.</div>
       <div class="toolbar">
         <button class="btn active" id="mlo1Btn">MLO1</button>
         <button class="btn" id="mlo2Btn">MLO2</button>
+        <button class="btn" id="mlo3Btn">MLO3</button>
         <button class="btn" id="aiBtn">AI</button>
         <button class="btn" id="aiStudyBtn">AI - Study</button>
         <button class="btn" id="modeBtn">Study Mode</button>
@@ -1429,6 +1430,590 @@
           explanation: "I is regular by modular counting, III is regular by parity tracking, and IV is regular because parity of the total length can be recognized by a finite automaton. II and V impose non-regular counting constraints."
         }
       ];
+            const MLO3_QUESTIONS = [
+        {
+          id: 1,
+          topic: "Asymptotic Sets",
+          q: "Which of the following is an empty set?",
+          image: "assets/mlo3/Q1.png",
+          choices: [
+            "Omega(g(n)) intersection o(g(n))",
+            "Omega(g(n)) intersection omega(g(n))",
+            "O(g(n)) intersection o(g(n))",
+            "Omega(g(n)) intersection O(g(n))"
+          ],
+          answer: 0,
+          explanation: "A function cannot be both eventually at least a constant multiple of g(n) and strictly smaller than every constant multiple of g(n), so Omega(g(n)) intersection o(g(n)) is empty."
+        },
+        {
+          id: 2,
+          topic: "Recurrence Relations",
+          q: "Given the functions below, which recurrence relations correctly describe the time complexity of fun1 and fun2?",
+          image: "assets/mlo3/Q2.png",
+          choices: [
+            "Both fun1 and fun2 are described by T(n) = T(n - 1) + O(1).",
+            "fun1 is described by T(n) = T(n - 1) + O(1), and fun2 is described by T(n) = T(n - 1) * T(n - 1) + O(1).",
+            "Both fun1 and fun2 are described by T(n) = 2T(n - 1) + O(1).",
+            "fun1 is described by T(n) = T(n - 1) + O(1), and fun2 is described by T(n) = 2T(n - 1) + O(1)."
+          ],
+          answer: 3,
+          explanation: "fun1 makes one recursive call per level, so its recurrence is T(n) = T(n - 1) + O(1). fun2 makes two recursive calls on n - 1, so its recurrence is T(n) = 2T(n - 1) + O(1)."
+        },
+        {
+          id: 3,
+          topic: "Recurrence Relations",
+          q: "Which recurrence best describes LongPower?",
+          image: "assets/mlo3/Q3.png",
+          choices: [
+            "T(n) = T(n - 1) + O(1)",
+            "T(n) = T(n / 2) * T(n / 2) + O(1)",
+            "T(n) = 2T(n / 2) + O(1)",
+            "T(n) = 2T(n - 1) + O(1)",
+            "T(n) = 2T(n / 2)"
+          ],
+          answer: 2,
+          explanation: "The function makes two recursive calls on n / 2 and performs only constant extra work, so the recurrence is T(n) = 2T(n / 2) + O(1)."
+        },
+        {
+          id: 4,
+          topic: "Recurrence Relations",
+          q: "Given the recurrence shown in the image, what is the solution for T(n)?",
+          image: "assets/mlo3/Q4.png",
+          choices: ["n", "n^2", "n(n + 1) / 2", "n!", "None of the above"],
+          answer: 0,
+          explanation: "Starting from T(1) = 1 and adding 1 each time gives a linear growth pattern, so T(n) = n."
+        },
+        {
+          id: 5,
+          topic: "Asymptotic Analysis",
+          q: "What is the asymptotic running time of the algorithm below as a function of n?",
+          code: `i = 1;
+while (i <= n) {
+    j = n;
+    while (j >= 1) {
+        // Something
+        j = j / 2;
+    }
+    i = i + 1;
+}`,
+          choices: ["Theta(n)", "Theta(log n)", "Theta(n log n)", "Theta(n^2)"],
+          answer: 2,
+          explanation: "The outer loop runs n times. The inner loop halves j each time, so it runs Theta(log n) times. Together that gives Theta(n log n)."
+        },
+        {
+          id: 6,
+          topic: "Recurrence Relations",
+          q: "Given the recurrence shown in the image, what is the solution for T(n)?",
+          image: "assets/mlo3/Q6.png",
+          choices: ["n", "n^2", "n(n + 1) / 2", "n!", "None of the above"],
+          answer: 2,
+          explanation: "The recurrence T(n) = T(n - 1) + n sums the first n integers, so its solution is n(n + 1) / 2 up to constant factors."
+        },
+        {
+          id: 7,
+          topic: "Quick Sort",
+          q: "For Quick Sort, which of the following is accurate?",
+          choices: [
+            "The worst case and best case have the same order running time.",
+            "It always needs another same-sized array to finish sorting.",
+            "Two equal elements will always change their order after sorting.",
+            "The best case and average case have the same order running time."
+          ],
+          answer: 3,
+          explanation: "Quick Sort has best-case and average-case time Theta(n log n), while the worst case is Theta(n^2)."
+        },
+        {
+          id: 8,
+          topic: "Trees",
+          q: "Which of the following is the postorder tree walk of the tree shown in the image?",
+          image: "assets/mlo3/Q8.png",
+          choices: ["FBHADK", "FBADHK", "ADBKHF", "ABDFHK"],
+          answer: 2,
+          explanation: "Postorder visits left subtree, then right subtree, then the root. That gives A, D, B, K, H, F."
+        },
+        {
+          id: 9,
+          topic: "Loop Efficiency",
+          q: "Consider the following loops. If n is positive and the task performed inside the loop body is not an issue, which loop is the most efficient?",
+          code: `A) for (i = 0; i < n; i++)
+B) for (i = 0; i < n; i += 2)
+C) for (i = 1; i < n; i *= 2)
+D) for (i = n; i > -1; i /= 2)`,
+          choices: ["A", "B", "C", "D"],
+          answer: 2,
+          explanation: "Loop C runs only Theta(log n) times. The linear loops A and B do more work."
+        },
+        {
+          id: 10,
+          topic: "Binary Search Trees",
+          q: "Suppose numbers between 1 and 1000 are stored in a binary search tree and we search for 363. Which sequence could not be the sequence of nodes examined?",
+          choices: [
+            "2, 252, 401, 398, 330, 344, 399, 363",
+            "924, 220, 911, 244, 898, 258, 362, 363",
+            "925, 202, 911, 240, 909, 245, 363",
+            "2, 399, 387, 219, 266, 382, 381, 278, 363",
+            "202, 399, 387, 219, 266, 382, 381, 278, 363"
+          ],
+          answer: 0,
+          explanation: "After visiting 398 on the search path to 363, all later values must remain below 398. Seeing 399 later violates BST search constraints."
+        },
+        {
+          id: 11,
+          topic: "Binary Search Trees",
+          q: "Which of the following cannot be classified as a binary search tree?",
+          image: "assets/mlo3/Q11.png",
+          choices: ["A", "B", "C", "D", "E"],
+          answer: 4,
+          explanation: "Option E is not a BST because the value 6 appears in the left subtree of 5 even though it is greater than 5."
+        },
+        {
+          id: 12,
+          topic: "Arrays",
+          q: "Given a 20 x 15 matrix V stored in row-major order, where each entry occupies 2 bytes and V[0,0] starts at address x, what is the address of V[15,12]?",
+          choices: ["x + 324", "x + 384", "x + 444", "x + 474", "x + 624"],
+          answer: 3,
+          explanation: "In row-major order, offset = ((15 * 15) + 12) * 2 = 237 * 2 = 474 bytes, so the address is x + 474."
+        },
+        {
+          id: 13,
+          topic: "Arrays",
+          q: "A one-dimensional array V is stored in consecutive memory words, with each element occupying 2 bytes. If the starting address of V[i] is x, what is the address of V[j]?",
+          choices: [
+            "x + (i - j) + 2",
+            "x + 2i + 2j",
+            "x + i + j",
+            "x - 2j + 2i",
+            "x - 2i + 2j"
+          ],
+          answer: 4,
+          explanation: "Moving from index i to index j changes the address by 2(j - i), so the new address is x - 2i + 2j."
+        },
+        {
+          id: 14,
+          topic: "Binary Search Trees",
+          q: "If a binary search tree is made with the values 9, 4, 7, 8, 12, 2, 6, 3, what is the inorder traversal?",
+          choices: [
+            "12, 9, 8, 7, 6, 4, 3, 2",
+            "12, 6, 4, 7, 2, 9, 3, 8",
+            "2, 3, 4, 6, 7, 8, 9, 12",
+            "9, 7, 8, 12, 6, 3, 4, 2",
+            "None of the above"
+          ],
+          answer: 2,
+          explanation: "Inorder traversal of a BST lists the keys in sorted order."
+        },
+        {
+          id: 15,
+          topic: "Heaps",
+          q: "Using the trees in the image, choose all structures that are NOT max-heap trees.",
+          image: "assets/mlo3/Q15.png",
+          multiple: true,
+          choices: ["A", "B", "C", "D", "E"],
+          answers: [0, 1, 2, 3, 4],
+          explanation: "Each pictured structure violates the max-heap definition for either heap order, completeness, or both, so all five fail."
+        },
+        {
+          id: 16,
+          topic: "Binary Search Trees",
+          q: "For the binary search tree shown in the image, if a node is inserted as the immediate descendant to the left of 13, which values are possible?",
+          image: "assets/mlo3/Q16.png",
+          choices: ["11 and 15", "11 and 12", "2 and 11", "2 and 12", "9 and 11"],
+          answer: 1,
+          explanation: "A left child of 13 in that BST must be greater than 10 and less than 13, so 11 and 12 are the possible values."
+        },
+        {
+          id: 17,
+          topic: "Binary Search Trees",
+          q: "Which of the following are considered binary search trees?",
+          image: "assets/mlo3/Q17.png",
+          multiple: true,
+          choices: ["A", "B", "C", "D", "E"],
+          answers: [1, 2],
+          explanation: "B and C satisfy the BST ordering property throughout the tree. The others place values on the wrong side of an ancestor."
+        },
+        {
+          id: 18,
+          topic: "Graph Traversal",
+          q: "For the binary search tree shown in the image, what is the order of nodes visited using BFS and DFS?",
+          image: "assets/mlo3/Q18.png",
+          choices: [
+            "BFS: 8, 3, 10, 1, 6, 14, 4, 7, 13; DFS: 1, 3, 4, 6, 7, 8, 10, 13, 14",
+            "BFS: 4, 7, 13, 1, 6, 14, 3, 10, 8; DFS: 8, 3, 1, 6, 4, 7, 10, 14, 13",
+            "BFS: 4, 7, 13, 1, 6, 14, 3, 10, 8; DFS: 1, 3, 4, 6, 7, 8, 10, 13, 14",
+            "BFS: 8, 3, 10, 1, 6, 14, 4, 7, 13; DFS: 8, 3, 1, 6, 4, 7, 10, 14, 13",
+            "None of the above are correct"
+          ],
+          answer: 3,
+          explanation: "BFS visits level by level from the root. The DFS ordering shown here corresponds to preorder traversal of the same BST."
+        },
+        {
+          id: 19,
+          topic: "Trees",
+          q: "What is a tree?",
+          choices: [
+            "A graph that is connected and has no cycles",
+            "A graph that is connected and has cycles",
+            "A graph that is not necessarily connected but has no cycles",
+            "A graph in which each node points to two other nodes"
+          ],
+          answer: 0,
+          explanation: "A tree is a connected acyclic graph."
+        },
+        {
+          id: 20,
+          topic: "Algorithm Growth",
+          q: "Which ordering goes from best to worst algorithm speed?",
+          choices: [
+            "Linear, Exponential, Polynomial, Logarithmic",
+            "Logarithmic, Linear, Polynomial, Exponential",
+            "Exponential, Polynomial, Linear, Logarithmic",
+            "Logarithmic, Exponential, Linear, Polynomial",
+            "Logarithmic, Linear, Exponential, Polynomial"
+          ],
+          answer: 1,
+          explanation: "From fastest-growing efficiency to slowest time growth, logarithmic is best, followed by linear, polynomial, then exponential."
+        },
+        {
+          id: 21,
+          topic: "Theta Notation",
+          q: "What is the value in Theta notation of the summation shown in the image?",
+          image: "assets/mlo3/Q21.png",
+          choices: ["Theta(n^100)", "Theta(n^101)", "Theta(n^99)", "Theta(n^100 log n)", "Theta((log n)^100)"],
+          answer: 1,
+          explanation: "The sum of i^k from 1 to n grows as Theta(n^(k + 1)). With k = 100, the result is Theta(n^101)."
+        },
+        {
+          id: 22,
+          topic: "Graphs",
+          q: "Let G = (V, E) be a graph with |V| = n and |E| = e. What is the complexity of BFS as a function of n and e?",
+          choices: ["O(n * e)", "O(n + e)", "O(n log e)", "O(n^2 e)", "None of the above"],
+          answer: 1,
+          explanation: "BFS visits each vertex and each edge a constant number of times, which gives O(n + e)."
+        },
+        {
+          id: 23,
+          topic: "Graphs",
+          q: "Suppose a connected weighted graph is divided into V1 and V2, we compute an MST on each part, then connect them with the minimum-weight edge between the parts. What can be concluded about the resulting graph T?",
+          choices: [
+            "T is always a spanning tree but not necessarily minimal.",
+            "T is always a minimum spanning tree.",
+            "T is not necessarily a spanning tree.",
+            "T is the only minimum spanning tree that contains e."
+          ],
+          answer: 0,
+          explanation: "The construction always gives a spanning tree, but local optimality on each side does not guarantee a globally minimal spanning tree."
+        },
+        {
+          id: 24,
+          topic: "Asymptotic Analysis",
+          q: "How many times is the statement x = 2 * x executed, asymptotically?",
+          code: `j = n; x = 1;
+while (j >= 1) {
+    for (i = 1; i <= 2 * n; i++)
+        x = 2 * x;
+    j = j / 2;
+}`,
+          choices: [
+            "Theta(n^2 / 2)",
+            "Theta(n^2 log(n)^2)",
+            "Theta(n^2 log n)",
+            "Theta(n log n)",
+            "Theta(n)"
+          ],
+          answer: 3,
+          explanation: "The outer loop runs Theta(log n) times and the inner loop runs Theta(n) times each round, so the total is Theta(n log n)."
+        },
+        {
+          id: 25,
+          topic: "Algorithms",
+          q: "Give the worst-case running times as a function of n for the Smart, NotSmart, and Foolish factorial algorithms.",
+          code: `Algorithm Smart:
+long factorial(int n) {
+    if (n <= 1)
+        return 1;
+    else
+        return n * factorial(n - 1);
+}
+
+Algorithm NotSmart:
+long factorial(int n) {
+    x = 1;
+    for (i = 1; i <= n; i++)
+        x = x * i;
+    return x;
+}
+
+Algorithm Foolish:
+long factorial(int n) {
+    if (n <= 1)
+        return 1;
+    else
+        return factorial(n) * factorial(n - 1);
+}`,
+          choices: [
+            "All algorithms are Theta(n).",
+            "All algorithms are Theta(n^2).",
+            "Smart is Theta(n), NotSmart is Theta(n^2), and Foolish does not terminate.",
+            "Smart is Theta(n), NotSmart is O(n), and Foolish does not terminate.",
+            "Smart is Theta(n^2), NotSmart is Theta(n^2), and Foolish does not terminate."
+          ],
+          answer: 3,
+          explanation: "Smart and NotSmart are both linear in n, while Foolish never reduces the first recursive call and therefore does not terminate."
+        },
+        {
+          id: 26,
+          topic: "Recurrence Relations",
+          q: "Given the same functions fun1 and fun2, which pair correctly describes their time complexities?",
+          code: `int fun1(int n) {
+    if (n <= 1)
+        return n;
+    return 2 * fun1(n - 1);
+}
+
+int fun2(int n) {
+    if (n <= 1)
+        return n;
+    return fun2(n - 1) + fun2(n - 1);
+}`,
+          choices: ["O(2^n), O(2^n)", "O(n), O(2^n)", "O(2^n), O(n)", "O(n), O(n)", "None of the above"],
+          answer: 1,
+          explanation: "fun1 makes one recursive call per level, so it is O(n). fun2 makes two recursive calls per level, so it is O(2^n)."
+        },
+        {
+          id: 27,
+          topic: "Trees",
+          q: "True or False: A tree is a graph that is not necessarily connected but has no cycles.",
+          choices: ["True", "False"],
+          answer: 1,
+          explanation: "False. A tree must be connected and acyclic."
+        },
+        {
+          id: 28,
+          topic: "Asymptotic Analysis",
+          q: "True or False: n log n + n^2 = Theta(n^2 + sqrt(n)).",
+          choices: ["True", "False"],
+          answer: 0,
+          explanation: "True. Both sides are dominated by n^2."
+        },
+        {
+          id: 29,
+          topic: "Merge Sort",
+          q: "Which recurrence relation defines Merge Sort?",
+          choices: [
+            "I. T(n) = T(n - 1) + 1",
+            "II. T(n) = 2T(n / 2) + 1",
+            "III. T(n) = T(n - 1) + Theta(n)",
+            "IV. T(n) = 2T(n / 2) + Theta(n)",
+            "V. None of the above"
+          ],
+          answer: 3,
+          explanation: "Merge Sort divides into two subproblems of size n / 2 and merges in linear time, giving T(n) = 2T(n / 2) + Theta(n)."
+        },
+        {
+          id: 30,
+          topic: "Sorting",
+          q: "The number of data swappings is minimal in which sorting algorithm?",
+          choices: [
+            "I. Selection Sort",
+            "II. Bubble Sort",
+            "III. Merge Sort",
+            "IV. Quick Sort",
+            "V. Insertion Sort"
+          ],
+          answer: 0,
+          explanation: "Selection Sort minimizes swaps because it performs at most one swap per position."
+        },
+        {
+          id: 31,
+          topic: "Sorting",
+          q: "Bank transactions are already almost sorted by check number. Which sorting algorithm would work best for this case?",
+          choices: ["Insertion sort algorithm", "Merge-Sort algorithm", "Heap-Sort algorithm", "Quick-Sort algorithm", "Counting-Sort algorithm"],
+          answer: 0,
+          explanation: "Insertion Sort is especially effective on nearly sorted input."
+        },
+        {
+          id: 32,
+          topic: "Sorting",
+          q: "The way a card game player arranges cards while picking them one by one can be compared to which sorting algorithm?",
+          choices: [
+            "I. Selection Sort",
+            "II. Bubble Sort",
+            "III. Merge Sort",
+            "IV. Quick Sort",
+            "V. Insertion Sort"
+          ],
+          answer: 4,
+          explanation: "The player inserts each new card into the proper position among the already arranged cards, which mirrors Insertion Sort."
+        },
+        {
+          id: 33,
+          topic: "Merge Sort",
+          q: "The complexity of Merge Sort algorithm is",
+          choices: ["I. O(n)", "II. O(log n)", "III. O(n^2)", "IV. O(n log n)", "V. None of the above"],
+          answer: 3,
+          explanation: "Merge Sort runs in O(n log n)."
+        },
+        {
+          id: 34,
+          topic: "Bubble Sort",
+          q: "The total number of comparisons in Bubble Sort is",
+          choices: ["I. O(n)", "II. O(log n)", "III. O(n^2)", "IV. O(n log n)", "V. None of the above"],
+          answer: 2,
+          explanation: "Bubble Sort makes quadratic comparisons in the worst case."
+        },
+        {
+          id: 35,
+          topic: "Data Structures",
+          q: "Suppose employee records are stored using: 1) a sorted array list, 2) a sorted linked list, 3) an unsorted linked list, and 4) a balanced BST. What are the average search times in that order?",
+          choices: [
+            "O(log N), O(log N), O(N), O(1)",
+            "O(log N), O(N), O(N), O(log N)",
+            "O(N), O(log N), O(N), O(1)",
+            "O(log N), O(log N), O(N), O(log N)",
+            "O(log N), O(log N), O(log N), O(1)"
+          ],
+          answer: 1,
+          explanation: "Binary search on the sorted array is O(log N), linked lists require O(N) traversal, and a balanced BST supports O(log N) average search."
+        },
+        {
+          id: 36,
+          topic: "Hashing",
+          q: "Using the hash function shown in the image, what is the order of the hash codes for keys 61, 62, 63, 64, and 65 when m = 1000?",
+          image: "assets/mlo3/Q36.png",
+          choices: [
+            "625, 125, 0, 750, 875",
+            "625, 750, 625, 125, 0",
+            "625, 125, 0, 875, 750",
+            "625, 750, 875, 0, 125",
+            "625, 750, 125, 875, 0"
+          ],
+          answer: 3,
+          explanation: "With A = 2^-3 = 1/8, the multiplication method gives 61 -> 625, 62 -> 750, 63 -> 875, 64 -> 0, and 65 -> 125."
+        },
+        {
+          id: 37,
+          topic: "Master Theorem",
+          q: "Which of the following is the solution using the Master Theorem for T(n) = 16T(n / 4) + n?",
+          choices: ["Theta(n^2)", "Theta(n log n)", "Theta(2^n)", "Theta(n!)", "Theta(n log^2 n)"],
+          answer: 0,
+          explanation: "Since n^(log_4 16) = n^2 and f(n) = n is smaller, the solution is Theta(n^2)."
+        },
+        {
+          id: 38,
+          topic: "Master Theorem",
+          q: "Which of the following is the solution using the Master Theorem for T(n) = 3T(n / 3) + n / 2?",
+          choices: ["Theta(n)", "Theta(n log n)", "Theta(2^n)", "Theta(n!)", "Theta(n log^2 n)"],
+          answer: 1,
+          explanation: "Here n^(log_3 3) = n and f(n) is Theta(n), so the equal case applies and the answer is Theta(n log n)."
+        },
+        {
+          id: 39,
+          topic: "Master Theorem",
+          q: "Which of the following is the solution using the Master Theorem for T(n) = 3T(n / 2) + n^2?",
+          choices: ["Theta(n)", "Theta(n log n)", "Theta(2^n)", "Theta(n^2)", "Theta(n log^2 n)"],
+          answer: 3,
+          explanation: "The additive term n^2 dominates n^(log_2 3), so the answer is Theta(n^2)."
+        },
+        {
+          id: 40,
+          topic: "Master Theorem",
+          q: "Which of the following is the solution using the Master Theorem for T(n) = 4T(n / 2) + n?",
+          choices: ["Theta(n)", "Theta(n log n)", "Theta(2^n)", "Theta(n^2)", "Theta(n log^2 n)"],
+          answer: 3,
+          explanation: "Because n^(log_2 4) = n^2 and the additive term is only linear, the solution is Theta(n^2)."
+        },
+        {
+          id: 41,
+          topic: "Master Theorem",
+          q: "Which of the following is the solution using the Master Theorem for T(n) = 4T(n / 2) + log n?",
+          choices: ["Theta(n)", "Theta(n log n)", "Theta(2^n)", "Theta(n^2)", "Theta(n log^2 n)"],
+          answer: 3,
+          explanation: "Again n^(log_2 4) = n^2 dominates the additive term, so the result is Theta(n^2)."
+        },
+        {
+          id: 42,
+          topic: "Trees",
+          q: "Which of the graphs in the image can be categorized as a tree?",
+          image: "assets/mlo3/Q42.png",
+          multiple: true,
+          choices: ["Graph 1", "Graph 2", "Graph 3", "Graph 4"],
+          answers: [0, 2],
+          explanation: "The correct choices are Graph 1 and Graph 3 for this quiz item."
+        },
+        {
+          id: 43,
+          topic: "Minimum Spanning Trees",
+          q: "What is the minimum possible weight of the spanning tree for the graph shown in the image?",
+          image: "assets/mlo3/Q43.png",
+          choices: ["25", "15", "16", "12", "20"],
+          answer: 1,
+          explanation: "A minimum spanning tree can use edges of weights 1, 1, 2, 3, 4, and 4, for a total of 15."
+        },
+        {
+          id: 44,
+          topic: "Binary Search Trees",
+          q: "An integer x is inserted as a left subnode of the node containing 54 in the BST shown in the image. Of the integers 24, 51, and 53, which values can x be?",
+          image: "assets/mlo3/Q44.png",
+          choices: ["24 only", "24 and 53 only", "51 and 53 only", "51 only", "24, 51, and 53"],
+          answer: 2,
+          explanation: "Since x is in the right subtree of 50 but the left subtree of 54, it must satisfy 50 < x < 54. That leaves 51 and 53."
+        },
+        {
+          id: 45,
+          topic: "Trees",
+          q: "The number of vertices in a tree with 57 edges is",
+          choices: ["56", "57", "58", "2^57", "2^58"],
+          answer: 2,
+          explanation: "A tree with n vertices has n - 1 edges, so 57 edges means 58 vertices."
+        },
+        {
+          id: 46,
+          topic: "Graph Traversal",
+          q: "In what order are the vertices visited in depth-first search starting at vertex b, assuming neighbors are visited in alphabetical order?",
+          image: "assets/mlo3/Q46.png",
+          choices: [
+            "b, a, d, c, e, h, f, g",
+            "b, a, d, c, h, e, f, g",
+            "b, a, e, d, g, c, f, h",
+            "b, a, d, e, c, f, g, h",
+            "None of the above"
+          ],
+          answer: 1,
+          explanation: "Starting at b, DFS visits a first, then d, then c, then backtracks through h to e and f, and finally reaches g."
+        },
+        {
+          id: 47,
+          topic: "Asymptotic Analysis",
+          q: "True or False: n = O(2^(lg n)).",
+          choices: ["True", "False"],
+          answer: 0,
+          explanation: "True. Since 2^(lg n) = n, the statement holds exactly."
+        },
+        {
+          id: 48,
+          topic: "Recurrence Relations",
+          q: "True or False: The solution of T(n) = 2T(n / 4) + n is the same as the solution of T(n) = 2T(n / 4) + n^(3/2).",
+          choices: ["True", "False"],
+          answer: 1,
+          explanation: "False. The first recurrence solves to Theta(n), while the second is Theta(n^(3/2))."
+        },
+        {
+          id: 49,
+          topic: "Heaps",
+          q: "True or False: With 1000 elements, the maximum height of a max-heap tree is 10. The tree height is defined as the longest path from the root node to a leaf node.",
+          choices: ["True", "False"],
+          answer: 1,
+          explanation: "False. The maximum heap height in edges is floor(log2 1000) = 9."
+        },
+        {
+          id: 50,
+          topic: "Insertion Sort",
+          q: "True or False: Let array A = <1, 2, 3, 4, 5, 6, 7, 8, 9, 10>. The number of comparisons needed to sort A using insertion sort is 9.",
+          choices: ["True", "False"],
+          answer: 0,
+          explanation: "True. An already sorted array needs one comparison for each position after the first, so the total is 9."
+        }
+      ];
       const AI_QUESTIONS = [
         {
           id: 1,
@@ -2595,6 +3180,12 @@
           notice: "all 50 MLO2 questions are now loaded. I used your screenshots for the diagram-heavy questions instead of embedding cropped page snippets.",
           questions: MLO2_QUESTIONS
         },
+        mlo3: {
+          label: "MLO3",
+          notice: "all 50 MLO3 questions are now loaded. I re-aligned the numbering against your PDF and embedded the exact screenshots you saved in assets/mlo3 for the image-backed questions.",
+          emptyState: "The MLO3 tab is ready and fully loaded.",
+          questions: MLO3_QUESTIONS
+        },
         ai: {
           label: "AI",
           notice: "all recovered AI quiz questions from Weeks 1, 2, 3, 4, 5, and 8 are now loaded. Week 1 Question 14 uses your corrected answer text.",
@@ -2612,7 +3203,7 @@
         activeExam: "mlo1",
         studyMode: false,
         showAllExplanations: false,
-        answers: { mlo1: {}, mlo2: {}, ai: {}, aiStudy: {} }
+        answers: { mlo1: {}, mlo2: {}, mlo3: {}, ai: {}, aiStudy: {} }
       };
       const quizRoot = document.getElementById("quizRoot");
       const jumpNav = document.getElementById("jumpNav");
@@ -2623,6 +3214,7 @@
       const resetBtn = document.getElementById("resetBtn");
       const mlo1Btn = document.getElementById("mlo1Btn");
       const mlo2Btn = document.getElementById("mlo2Btn");
+      const mlo3Btn = document.getElementById("mlo3Btn");
       const aiBtn = document.getElementById("aiBtn");
       const aiStudyBtn = document.getElementById("aiStudyBtn");
       const noticeTitle = document.getElementById("noticeTitle");
@@ -2732,6 +3324,7 @@
         noticeText.textContent = ` ${exam.notice}`;
         mlo1Btn.classList.toggle("active", state.activeExam === "mlo1");
         mlo2Btn.classList.toggle("active", state.activeExam === "mlo2");
+        mlo3Btn.classList.toggle("active", state.activeExam === "mlo3");
         aiBtn.classList.toggle("active", state.activeExam === "ai");
         aiStudyBtn.classList.toggle("active", state.activeExam === "aiStudy");
         renderJumpNav();
@@ -2860,6 +3453,11 @@
 
       mlo2Btn.addEventListener("click", () => {
         state.activeExam = "mlo2";
+        render();
+      });
+
+      mlo3Btn.addEventListener("click", () => {
+        state.activeExam = "mlo3";
         render();
       });
 
