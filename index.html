@@ -217,12 +217,13 @@
   <body>
     <header>
       <h1>Exam Practice Hub</h1>
-      <div class="subtitle">Switch between MLO1, MLO2, MLO3, AI quizzes, and AI study questions as we build your study bank.</div>
-      <div class="meta-note">MLO1 and MLO2 are live. MLO3 is now wired in, and the AI tabs are ready for your quiz PDFs and study material.</div>
+      <div class="subtitle">Switch between MLO1, MLO2, MLO3, MLO4, AI quizzes, and AI study questions as we build your study bank.</div>
+      <div class="meta-note">MLO1, MLO2, and MLO3 are live. MLO4 is now wired in, and the AI tabs are ready for your quiz PDFs and study material.</div>
       <div class="toolbar">
         <button class="btn active" id="mlo1Btn">MLO1</button>
         <button class="btn" id="mlo2Btn">MLO2</button>
         <button class="btn" id="mlo3Btn">MLO3</button>
+        <button class="btn" id="mlo4Btn">MLO4</button>
         <button class="btn" id="aiBtn">AI</button>
         <button class="btn" id="aiStudyBtn">AI - Study</button>
         <button class="btn" id="modeBtn">Study Mode</button>
@@ -2014,6 +2015,462 @@ int fun2(int n) {
           explanation: "True. An already sorted array needs one comparison for each position after the first, so the total is 9."
         }
       ];
+      const MLO4_QUESTIONS = [
+        {
+          id: 1,
+          topic: "Boolean Algebra",
+          q: "Simplify the Boolean expression F(x, y, z) = x'y'z' + x'y'z + xy'z + xy'z'.",
+          choices: ["F(x, y, z) = y'", "F(x, y, z) = z'", "F(x, y, z) = x'", "None of the above"],
+          answer: 0,
+          explanation: "Every term contains y', and all combinations of x and z are covered, so the expression simplifies to y'."
+        },
+        {
+          id: 2,
+          topic: "Number Systems",
+          q: "Convert the decimal number 259.125 to hexadecimal.",
+          choices: ["103.2", "99.25", "97.25", "98.25"],
+          answer: 0,
+          explanation: "259 = 0x103 and 0.125 = 0.2 in hexadecimal, so the result is 103.2."
+        },
+        {
+          id: 3,
+          topic: "Cache",
+          q: "The principal disadvantage of which mapping method is the complex circuitry required to examine the tags of all cache lines in parallel?",
+          choices: ["Direct", "None of the above", "Fully associative", "Set associative"],
+          answer: 2,
+          explanation: "Fully associative mapping compares the requested tag against all cache tags, which requires the most complex parallel hardware."
+        },
+        {
+          id: 4,
+          topic: "Cache",
+          q: "What cache mapping function does not require a replacement algorithm?",
+          choices: ["Set associative", "Direct", "Fully associative", "None of the above"],
+          answer: 1,
+          explanation: "In direct mapping each block has exactly one place it can go, so there is no replacement choice to make."
+        },
+        {
+          id: 5,
+          topic: "Computer Organization",
+          q: "The four main structural components of the computer are CPU, main memory, I/O, and ________.",
+          choices: ["ALU", "External memory", "Interconnection", "Register"],
+          answer: 2,
+          explanation: "The standard four structural components are CPU, main memory, I/O, and the system interconnection."
+        },
+        {
+          id: 6,
+          topic: "Number Systems",
+          q: "Convert the hexadecimal number 1111.1 to decimal.",
+          choices: ["9870.0625", "8970.0625", "4369.0625", "9781.0625"],
+          answer: 2,
+          explanation: "1111 hex = 4369 decimal, and .1 hex = 1/16 = 0.0625."
+        },
+        {
+          id: 7,
+          topic: "Boolean Algebra",
+          q: "Simplify the Boolean expression F(x, y, z) = xy' + yz' + x'y'z'.",
+          choices: ["F(x, y, z) = xy' + z'", "F(x, y, z) = x + y' + z'", "F(x, y, z) = xz + y'", "F(x, y, z) = x + y'z'"],
+          answer: 0,
+          explanation: "The expression simplifies to xy' + z'."
+        },
+        {
+          id: 8,
+          topic: "Number Systems",
+          q: "Convert the binary number 0101 1110.0101 to decimal.",
+          choices: ["93.3125", "94.3125", "91.3125", "92.3125"],
+          answer: 1,
+          explanation: "01011110 is 94, and .0101 is 5/16 = 0.3125."
+        },
+        {
+          id: 9,
+          topic: "Logic Gates",
+          q: "The operator ______ yields true if and only if both of its operands are true.",
+          choices: ["XOR", "OR", "NOT", "AND"],
+          answer: 3,
+          explanation: "AND is true only when both operands are true."
+        },
+        {
+          id: 10,
+          topic: "Logic Gates",
+          q: "The operation ______ yields true if either or both of its operands are true.",
+          choices: ["XOR", "NOT", "OR", "AND"],
+          answer: 2,
+          explanation: "OR is true when at least one operand is true."
+        },
+        {
+          id: 11,
+          topic: "Scheduling",
+          q: "Round-robin scheduling is used for tasks A=8, B=4, C=9, D=5 with time quantum 6. What are the average turnaround time and average wait time?",
+          choices: ["21, 13.5", "20, 13.5", "20, 13", "21, 13"],
+          answer: 1,
+          explanation: "The completion times are A=23, B=10, C=26, D=21, which gives average turnaround 20 and average wait 13.5."
+        },
+        {
+          id: 12,
+          topic: "Scheduling",
+          q: "Processes P1=(0,7), P2=(2,4), P3=(4,1), P4=(5,4) are scheduled using preemptive SJF. What are the average waiting time and average turnaround time?",
+          choices: ["3.5, 7", "4, 12", "4, 7", "3, 7"],
+          answer: 3,
+          explanation: "Using preemptive SJF gives average waiting time 3 and average turnaround time 7."
+        },
+        {
+          id: 13,
+          topic: "Assembly",
+          q: "What are the contents of register R after executing the instructions below? Assume 2's complement arithmetic.",
+          code: `mov R, -1D\nand R, 78H`,
+          choices: ["1010 1110B", "0101 0001B", "0101 0000B", "0111 1000B"],
+          answer: 3,
+          explanation: "-1 in 2's complement is all 1s, so AND with 78H leaves 78H, which is 0111 1000B."
+        },
+        {
+          id: 14,
+          topic: "Cache",
+          q: "Using the direct-mapped cache shown in the image, if we request memory address A1 24 29 C3, what data is returned?",
+          image: "assets/mlo4/q14.png",
+          choices: ["D0", "D3", "D4", "D2"],
+          answer: 2,
+          explanation: "The tag matches A124, the line maps to A70, and the word offset selects the 11 position, which contains D4."
+        },
+        {
+          id: 15,
+          topic: "Parallel Processing",
+          q: "If each multiplication requires 100 nanoseconds, what is the time to compute 1000 multiplications on an array processing architecture with 9 processors?",
+          choices: ["11000", "11200", "9000", "9900"],
+          answer: 1,
+          explanation: "The processors need ceil(1000 / 9) = 112 rounds, so the time is 112 * 100 = 11200 ns."
+        },
+        {
+          id: 16,
+          topic: "Virtual Memory",
+          q: "A process has 4 frames. The page table initially has page 4 in frame 122 and page 2 in frame 344, with frames 477 and 898 empty. The subsequent page references are 1, 2, 3, 4, 1, 2, 5. Using LRU, which frame is assigned to page 5?",
+          choices: ["122", "477", "898", "344"],
+          answer: 2,
+          explanation: "Pages 1 and 3 fill the two empty frames. By the time page 5 arrives, page 3 is the least recently used, so page 5 replaces the page in frame 898."
+        },
+        {
+          id: 17,
+          topic: "Assembly",
+          q: "What are the contents of register R1 in decimal after executing the following instructions? All numbers are hexadecimal and negatives use 2's complement.",
+          code: `MOV R1, DA\nMOV R2, 07\nADD R1, R2`,
+          choices: ["-32", "31", "-31", "32"],
+          answer: 2,
+          explanation: "DA hex is -38 in signed 8-bit form. Adding 7 gives -31."
+        },
+        {
+          id: 18,
+          topic: "Assembly",
+          q: "Which instruction sequence correctly computes R3 = (R1 + R2) * (R4 - R3)?",
+          code: `I.\nADD R1, R2, R2\nSUB R4, R3, R4\nMUL R1, R4, R3\n\nII.\nADD R1, R2, R1\nSUB R4, R3, R4\nMUL R3, R4, R1\n\nIII.\nADD R1, R1, R2\nSUB R4, R4, R3\nMUL R3, R1, R4\n\nIV. None of the above`,
+          choices: ["I", "II", "III", "IV"],
+          answer: 2,
+          explanation: "Sequence III first computes R1 + R2, then R4 - R3, and finally multiplies those into R3."
+        },
+        {
+          id: 19,
+          topic: "Assembly",
+          q: "What are the contents of register R in decimal after executing these instructions?",
+          code: `MOV R, 12\nSAL R, 4`,
+          choices: ["52", "62", "32", "42"],
+          answer: 2,
+          explanation: "12 hex is 0001 0010. Shifting left four bits in an 8-bit register gives 0010 0000, which is 32 decimal."
+        },
+        {
+          id: 20,
+          topic: "Pipelining",
+          q: "In a pipelined multiplication architecture with 6 stages and each stage requiring 10 microseconds, what is the processing time to compute 1000 multiplications?",
+          choices: ["10600", "10050", "6000", "10060"],
+          answer: 1,
+          explanation: "Pipeline time is (k + n - 1) * stage time = (6 + 1000 - 1) * 10 = 10050 microseconds."
+        },
+        {
+          id: 21,
+          topic: "Scheduling",
+          q: "Tasks A=8, B=13, C=10 are scheduled by round robin in the order A, B, C with time slice 6 ms. What is the average turnaround time?",
+          choices: ["31/3", "81/3", "82/3", "32/3"],
+          answer: 1,
+          explanation: "The completion times are A=20, B=31, C=30, so the average turnaround time is (20 + 31 + 30) / 3 = 81/3."
+        },
+        {
+          id: 22,
+          topic: "Cache",
+          q: "A cache hit takes 5 cycles and a miss takes 20 cycles. What is the effective access time if the hit ratio is 90%, and what hit ratio is needed for an 8-cycle effective access time?",
+          choices: ["6.5 and 75%", "6.5 and 80%", "18.5 and 75%", "18.5 and 70%"],
+          answer: 1,
+          explanation: "EMAT = 0.9(5) + 0.1(20) = 6.5 cycles. Solving 5h + 20(1-h) = 8 gives h = 0.8."
+        },
+        {
+          id: 23,
+          topic: "Arrays",
+          q: "The memory address of element I of an array is calculated by which formula, given W words per element, lower bound L, upper bound U, and base address A?",
+          choices: ["A + W(U - I)", "A + W(I + U - L)", "AW + IW", "A + W(I - L)"],
+          answer: 3,
+          explanation: "The standard array address formula is base plus element size times the index offset from the lower bound: A + W(I - L)."
+        },
+        {
+          id: 24,
+          topic: "Performance",
+          q: "Machine M1 has clock rate 500 MHz and average CPI 4. Machine M2 has clock rate 750 MHz and average CPI 3. Which statement is true?",
+          choices: [
+            "B is faster than A by a factor of 4/3",
+            "A is faster than B by a factor of 750/500",
+            "B is faster than A by a factor of 500/750",
+            "B is faster than A by a factor of 2"
+          ],
+          answer: 3,
+          explanation: "Performance is proportional to clock rate / CPI. M1 gives 125, M2 gives 250, so M2 is twice as fast."
+        },
+        {
+          id: 25,
+          topic: "SQL",
+          q: "To remove a relation from an SQL database, which command is used?",
+          choices: ["Purge", "Remove", "Delete", "Drop table"],
+          answer: 3,
+          explanation: "Relations (tables) are removed with DROP TABLE."
+        },
+        {
+          id: 26,
+          topic: "SQL",
+          q: "A stored procedure in SQL is a ______.",
+          choices: [
+            "Group of distinct SQL statements",
+            "Block of functions",
+            "Group of Transact-SQL statements compiled into a single execution plan",
+            "Group of transactions"
+          ],
+          answer: 2,
+          explanation: "A stored procedure is a compiled group of SQL statements stored for reuse."
+        },
+        {
+          id: 27,
+          topic: "SQL",
+          q: "Given relations R1 and R2 in the PDF, how many rows does the query return?\n\nSELECT *\nFROM R1, R2\nWHERE R1.Name = R2.Manager",
+          choices: ["2", "1", "4", "3"],
+          answer: 0,
+          explanation: "Only George and Harriet appear as both employee names in R1 and managers in R2, so the query returns 2 rows."
+        },
+        {
+          id: 28,
+          topic: "SQL",
+          q: "Which command is used to display the departments of the instructor relation?",
+          choices: [
+            "Select dept_name for instructor where Name=Jackson;",
+            "Select * from instructor;",
+            "Select dept_name from instructor;",
+            "Select * from instructor where Dept_name = Finance;"
+          ],
+          answer: 2,
+          explanation: "Selecting the dept_name column from the instructor table displays the departments."
+        },
+        {
+          id: 29,
+          topic: "SQL",
+          q: "If all people in the Music department are removed from the instructor relation, which SQL statement should be used?",
+          choices: [
+            "Remove Dept_name = Music instructor",
+            "Delete Dept_name = Music in instructor;",
+            "Remove Dept_name = Music",
+            "Delete from instructor where Dept_name = Music;"
+          ],
+          answer: 3,
+          explanation: "DELETE FROM ... WHERE ... is the correct SQL syntax."
+        },
+        {
+          id: 30,
+          topic: "Databases",
+          q: "In order to maintain consistency during transactions, a database provides ______.",
+          choices: ["Atomic", "Flashback", "Commit", "Retain"],
+          answer: 0,
+          explanation: "Atomicity is part of the ACID properties used to preserve transaction consistency."
+        },
+        {
+          id: 31,
+          topic: "SQL Joins",
+          q: "Using the relations R1 and R2 from the PDF, how many rows will be in the table of R1 RIGHT OUTER JOIN R2?",
+          choices: ["2", "4", "3", "5", "1"],
+          answer: 3,
+          explanation: "Finance matches 2 rows, Sales matches 2 rows, and Production contributes 1 unmatched right-side row, for a total of 5."
+        },
+        {
+          id: 32,
+          topic: "SQL Joins",
+          q: "How can we select the elements which have common Dept_name in both the instructor and course relations?",
+          choices: [
+            "Select Dept_name from instructor, course;",
+            "Select Dept_name from instructor where Dept_name = NULL;",
+            "Select * from instructor i, course c where i.Dept_name = c.Dept_name;",
+            "Select * from instructor i, course c;"
+          ],
+          answer: 2,
+          explanation: "Matching common department names requires a join condition on Dept_name."
+        },
+        {
+          id: 33,
+          topic: "SQL Joins",
+          q: "Using the relations R1 and R2 from the PDF, how many rows will be in the table of R1 NATURAL JOIN R2?",
+          choices: ["4", "1", "3", "2"],
+          answer: 0,
+          explanation: "Finance contributes 2 matching rows and Sales contributes 2 matching rows, for 4 total."
+        },
+        {
+          id: 34,
+          topic: "Logic Gates",
+          q: "Which of the following logic expressions represent the logic diagram shown in Question 34?",
+          choices: ["I", "II", "III", "IV"],
+          answer: 0,
+          explanation: "The diagram feeds A and B through two NOT gates into one AND gate, and also feeds A and B directly into another AND gate. Those two AND outputs are then ORed together, so the expression is X = A'B' + AB. Choose the option that matches that expression."
+        },
+        {
+          id: 35,
+          topic: "Cache",
+          q: "Using the 2-way set associative cache shown in the image, what is the total main memory size in this scenario?",
+          image: "assets/mlo4/q35.png",
+          choices: ["8MB", "4MB", "32MB", "16MB", "64MB"],
+          answer: 3,
+          explanation: "The address uses 14 tag bits, 8 set-id bits, and 2 word-id bits, for 24 address bits total, which gives 2^24 bytes = 16MB."
+        },
+        {
+          id: 36,
+          topic: "Number Systems",
+          q: "Which of the following have an exact binary fixed-point notation of the form xxxxxx.xxx?",
+          image: "assets/mlo4/q36.png",
+          multiple: true,
+          choices: ["25.375", "25.1", "25.25", "24.325", "25.5", "25.275", "24.75", "25.625", "24.125", "24.150", "24.875"],
+          answers: [0, 2, 4, 6, 7, 8, 10],
+          explanation: "With three binary fractional bits, only values whose fractional part is a multiple of 1/8 can be represented exactly."
+        },
+        {
+          id: 37,
+          topic: "Cache",
+          q: "Using the 2-way set associative cache shown in the image, what is the total cache memory size in this scenario?",
+          image: "assets/mlo4/q37.png",
+          choices: ["2KB", "16KB", "1KB", "16MB", "4KB", "2MB", "1MB"],
+          answer: 0,
+          explanation: "There are 2^8 sets, 2 lines per set, and 4 words per line, so the total cache size is 256 * 2 * 4 bytes = 2KB."
+        },
+        {
+          id: 38,
+          topic: "Cache",
+          q: "A copy of the data from memory address 7121C5 is contained in the cache shown in the image. What value is retrieved?",
+          image: "assets/mlo4/q38.png",
+          choices: ["F5", "A5", "66", "C7", "94", "15", "A4"],
+          answer: 1,
+          explanation: "The address maps to set 01110001 with word index 01, and the matching tag selects the line containing A5."
+        },
+        {
+          id: 39,
+          topic: "Cache",
+          q: "A computer uses 32-bit byte addressing with a cache capacity of 32KB. Each cache block contains 16 bytes. Calculate the number of tag bits in Direct Mapping, Two-Way Set-Associative Mapping, and Fully Associative Mapping.",
+          choices: ["15, 16, 28", "4, 10, 18", "4, 18, 32", "17, 18, 28", "4, 18, 10"],
+          answer: 3,
+          explanation: "Offset bits = 4. Direct mapping uses 11 line bits, so tag = 17. Two-way set associative uses 10 set bits, so tag = 18. Fully associative uses only the offset, so tag = 28."
+        },
+        {
+          id: 40,
+          topic: "K-Maps",
+          q: "Which of the following simplest equations implements the K-map shown in the image?",
+          image: "assets/mlo4/q40.png",
+          choices: ["I", "II", "III", "IV"],
+          answer: 2,
+          explanation: "The K-map simplifies to X = AC + B, which corresponds to III."
+        },
+        {
+          id: 41,
+          topic: "Assembly",
+          q: "What are the contents of register R after executing the following instructions? Express the answer in decimal and hexadecimal.",
+          code: `MOV R, -3D\nAND R, 5AH`,
+          choices: ["57H, 80D", "88H, 58D", "3AH, -8D", "5BH, 80D", "58H, 88D"],
+          answer: 4,
+          explanation: "-3 in 8-bit 2's complement is FD. FD AND 5A = 58H, which is 88 decimal."
+        },
+        {
+          id: 42,
+          topic: "Cache",
+          q: "Which of the following are valid cache mapping functions?\nA) Direct mapping\nB) Set associative mapping\nC) Fully associative mapping",
+          choices: ["A only", "All of them", "None of them", "B only", "A and B only"],
+          answer: 1,
+          explanation: "Direct, set associative, and fully associative are all valid cache mapping schemes."
+        },
+        {
+          id: 43,
+          topic: "Networking",
+          q: "A network IP address consists of ______.",
+          choices: ["only host address", "network address & host address", "network address & MAC address", "only network address"],
+          answer: 1,
+          explanation: "An IP address is divided into a network portion and a host portion."
+        },
+        {
+          id: 44,
+          topic: "Networking",
+          q: "Which of the following statements is true regarding TCP and UDP?",
+          choices: [
+            "UDP can provide flow control and congestion control",
+            "UDP can provide reliable communications",
+            "TCP can provide reliable communications",
+            "Before actual communication, UDP needs a three-way handshake to establish the connection"
+          ],
+          answer: 2,
+          explanation: "TCP provides reliable, connection-oriented communication. UDP does not."
+        },
+        {
+          id: 45,
+          topic: "Networking",
+          q: "Which of the following statements are true regarding Ethernet?",
+          multiple: true,
+          choices: [
+            "Ethernet provides an unreliable channel",
+            "Ethernet provides a shared channel",
+            "Ethernet can handle data collision by a random back off",
+            "Ethernet cannot handle data collision"
+          ],
+          answers: [0, 1, 2],
+          explanation: "Classic Ethernet is shared, connectionless, and unreliable, and it resolves collisions with random backoff."
+        },
+        {
+          id: 46,
+          topic: "Networking",
+          q: "How does a TCP 3-way handshake work?",
+          choices: ["SYN, ACK, and FIN", "ACK, SYN-ACK, and SYN", "SYN, SYN-ACK, and ACK", "SYN, SYN-ACK, and FIN"],
+          answer: 2,
+          explanation: "The standard 3-way handshake is SYN, SYN-ACK, then ACK."
+        },
+        {
+          id: 47,
+          topic: "Networking",
+          q: "What is the data unit delivered at the Transport Layer?",
+          choices: ["Frames", "Bytes", "Segments", "Messages", "Packets"],
+          answer: 2,
+          explanation: "The transport layer delivers segments."
+        },
+        {
+          id: 48,
+          topic: "Security",
+          q: "Which of the following statements is true regarding RSA?",
+          choices: [
+            "Given that Bob's public key is available online, Bob will use his public key to generate a digital signature",
+            "In reality, RSA is used to encrypt the actual data exchanged between a sender and a receiver",
+            "In RSA, the public key and private key are identical",
+            "In reality, RSA is used to encrypt the symmetric key"
+          ],
+          answer: 3,
+          explanation: "In practice, RSA is typically used to protect a symmetric session key, not the bulk data itself."
+        },
+        {
+          id: 49,
+          topic: "Networking",
+          q: "A network device that knows how to forward data along to other networks is known as a ______.",
+          choices: ["Router", "Switch", "Hub", "Server"],
+          answer: 0,
+          explanation: "Routers forward traffic between networks."
+        },
+        {
+          id: 50,
+          topic: "Networking",
+          q: "Router A is configured with NAT. Which of the following is accessible through the internet?",
+          image: "assets/mlo4/q50.png",
+          choices: ["10.0.0.2", "10.0.0.1", "127.0.0.1", "56.122.22.3"],
+          answer: 3,
+          explanation: "The public internet-facing address is 56.122.22.3. The 10.0.0.x addresses are private, and 127.0.0.1 is loopback."
+        }
+      ];
       const AI_QUESTIONS = [
         {
           id: 1,
@@ -3186,6 +3643,12 @@ int fun2(int n) {
           emptyState: "The MLO3 tab is ready and fully loaded.",
           questions: MLO3_QUESTIONS
         },
+        mlo4: {
+          label: "MLO4",
+          notice: "all 50 MLO4 questions are now loaded from the PDF and your exact assets/mlo4 screenshots. I also filled the missing Question 34 from the logic-diagram prompt you sent.",
+          emptyState: "The MLO4 tab is ready and fully loaded.",
+          questions: MLO4_QUESTIONS
+        },
         ai: {
           label: "AI",
           notice: "all recovered AI quiz questions from Weeks 1, 2, 3, 4, 5, and 8 are now loaded. Week 1 Question 14 uses your corrected answer text.",
@@ -3203,7 +3666,7 @@ int fun2(int n) {
         activeExam: "mlo1",
         studyMode: false,
         showAllExplanations: false,
-        answers: { mlo1: {}, mlo2: {}, mlo3: {}, ai: {}, aiStudy: {} }
+        answers: { mlo1: {}, mlo2: {}, mlo3: {}, mlo4: {}, ai: {}, aiStudy: {} }
       };
       const quizRoot = document.getElementById("quizRoot");
       const jumpNav = document.getElementById("jumpNav");
@@ -3215,6 +3678,7 @@ int fun2(int n) {
       const mlo1Btn = document.getElementById("mlo1Btn");
       const mlo2Btn = document.getElementById("mlo2Btn");
       const mlo3Btn = document.getElementById("mlo3Btn");
+      const mlo4Btn = document.getElementById("mlo4Btn");
       const aiBtn = document.getElementById("aiBtn");
       const aiStudyBtn = document.getElementById("aiStudyBtn");
       const noticeTitle = document.getElementById("noticeTitle");
@@ -3325,6 +3789,7 @@ int fun2(int n) {
         mlo1Btn.classList.toggle("active", state.activeExam === "mlo1");
         mlo2Btn.classList.toggle("active", state.activeExam === "mlo2");
         mlo3Btn.classList.toggle("active", state.activeExam === "mlo3");
+        mlo4Btn.classList.toggle("active", state.activeExam === "mlo4");
         aiBtn.classList.toggle("active", state.activeExam === "ai");
         aiStudyBtn.classList.toggle("active", state.activeExam === "aiStudy");
         renderJumpNav();
@@ -3458,6 +3923,11 @@ int fun2(int n) {
 
       mlo3Btn.addEventListener("click", () => {
         state.activeExam = "mlo3";
+        render();
+      });
+
+      mlo4Btn.addEventListener("click", () => {
+        state.activeExam = "mlo4";
         render();
       });
 
