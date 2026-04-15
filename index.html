@@ -2242,7 +2242,8 @@ int fun2(int n) {
         {
           id: 27,
           topic: "SQL",
-          q: "Given relations R1 and R2 in the PDF, how many rows does the query return?\n\nSELECT *\nFROM R1, R2\nWHERE R1.Name = R2.Manager",
+          q: "Given the two relations R1 and R2, how many rows does the query return?\n\nRelation R1:\nName     EmpId  DeptName\nHarry    3415   Finance\nSally    2241   Sales\nGeorge   3401   Finance\nHarriet  2202   Sales\nJim      5678   Advertizing\n\nRelation R2:\nDeptName    Manager\nFinance     George\nSales       Harriet\nProduction  Charles\n\nSELECT *\nFROM R1, R2\nWHERE R1.Name = R2.Manager",
+          image: "assets/mlo4/q27.png",
           choices: ["2", "1", "4", "3"],
           answer: 0,
           explanation: "Only George and Harriet appear as both employee names in R1 and managers in R2, so the query returns 2 rows."
@@ -2251,6 +2252,7 @@ int fun2(int n) {
           id: 28,
           topic: "SQL",
           q: "Which command is used to display the departments of the instructor relation?",
+          image: "assets/mlo4/q28.png",
           choices: [
             "Select dept_name for instructor where Name=Jackson;",
             "Select * from instructor;",
@@ -2264,6 +2266,7 @@ int fun2(int n) {
           id: 29,
           topic: "SQL",
           q: "If all people in the Music department are removed from the instructor relation, which SQL statement should be used?",
+          image: "assets/mlo4/q29.png",
           choices: [
             "Remove Dept_name = Music instructor",
             "Delete Dept_name = Music in instructor;",
@@ -2285,6 +2288,7 @@ int fun2(int n) {
           id: 31,
           topic: "SQL Joins",
           q: "Using the relations R1 and R2 from the PDF, how many rows will be in the table of R1 RIGHT OUTER JOIN R2?",
+          image: "assets/mlo4/q31.png",
           choices: ["2", "4", "3", "5", "1"],
           answer: 3,
           explanation: "Finance matches 2 rows, Sales matches 2 rows, and Production contributes 1 unmatched right-side row, for a total of 5."
@@ -2293,6 +2297,7 @@ int fun2(int n) {
           id: 32,
           topic: "SQL Joins",
           q: "How can we select the elements which have common Dept_name in both the instructor and course relations?",
+          image: "assets/mlo4/q32.png",
           choices: [
             "Select Dept_name from instructor, course;",
             "Select Dept_name from instructor where Dept_name = NULL;",
@@ -2306,6 +2311,7 @@ int fun2(int n) {
           id: 33,
           topic: "SQL Joins",
           q: "Using the relations R1 and R2 from the PDF, how many rows will be in the table of R1 NATURAL JOIN R2?",
+          image: "assets/mlo4/q33.png",
           choices: ["4", "1", "3", "2"],
           answer: 0,
           explanation: "Finance contributes 2 matching rows and Sales contributes 2 matching rows, for 4 total."
@@ -2314,6 +2320,7 @@ int fun2(int n) {
           id: 34,
           topic: "Logic Gates",
           q: "Which of the following logic expressions represent the logic diagram shown in Question 34?",
+          image: "assets/mlo4/q34.png",
           choices: ["I", "II", "III", "IV"],
           answer: 0,
           explanation: "The diagram feeds A and B through two NOT gates into one AND gate, and also feeds A and B directly into another AND gate. Those two AND outputs are then ORed together, so the expression is X = A'B' + AB. Choose the option that matches that expression."
