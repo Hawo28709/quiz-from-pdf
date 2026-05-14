@@ -217,14 +217,15 @@
   <body>
     <header>
       <h1>Exam Practice Hub</h1>
-      <div class="subtitle">Switch between MLO1, MLO2, MLO3, MLO4, AI quizzes, and AI study questions as we build your study bank.</div>
-      <div class="meta-note">MLO1, MLO2, and MLO3 are live. MLO4 is now wired in, and the AI tabs are ready for your quiz PDFs and study material.</div>
+      <div class="subtitle">Switch between MLO1, MLO2, MLO3, MLO4, AI quizzes, AI Final Exam, and AI study questions as we build your study bank.</div>
+      <div class="meta-note">MLO1 through MLO4 are live, the AI tabs are loaded, and the AI Final Exam tab now combines quiz review with a Chapter 12 study section.</div>
       <div class="toolbar">
         <button class="btn active" id="mlo1Btn">MLO1</button>
         <button class="btn" id="mlo2Btn">MLO2</button>
         <button class="btn" id="mlo3Btn">MLO3</button>
         <button class="btn" id="mlo4Btn">MLO4</button>
         <button class="btn" id="aiBtn">AI</button>
+        <button class="btn" id="aiFinalBtn">AI Final Exam</button>
         <button class="btn" id="aiStudyBtn">AI - Study</button>
         <button class="btn" id="modeBtn">Study Mode</button>
         <button class="btn" id="showAllBtn">Show All Explanations</button>
@@ -3633,6 +3634,542 @@ int fun2(int n) {
           explanation: "Resolution proof starts from `KB and not A` and tries to derive a contradiction."
         }
       ];
+      const AI_FINAL_QUESTIONS = [
+        {
+          id: 1,
+          topic: "Week 8 Quiz Q1",
+          q: "What does Bayes' Theorem allow you to compute?",
+          choices: [
+            "The probability of mutually exclusive events happening simultaneously.",
+            "The joint probability of two events based on their individual probabilities.",
+            "The sum of probabilities of all independent events in a system.",
+            "The probability of an event given the probability of another event."
+          ],
+          answer: 3,
+          explanation: "Bayes' Theorem is used for conditional reasoning: it lets you compute the probability of a hypothesis or event after observing related evidence."
+        },
+        {
+          id: 2,
+          topic: "Week 8 Quiz Q2",
+          q: "If two events A and B are independent, which of the following is true?",
+          choices: [
+            "P(A and B)=P(A)+P(B)",
+            "P(A and B)=P(A) * P(B)",
+            "P(A and B)=P(A | B)+P(B | A)",
+            "P(A and B)=P(A | B) * P(B)"
+          ],
+          answer: 1,
+          explanation: "If A and B are independent, knowing A happened does not change the probability of B, so the joint probability factors as P(A and B) = P(A)P(B)."
+        },
+        {
+          id: 3,
+          topic: "Week 8 Quiz Q3",
+          q: "What does the value α represent in the equation P(C | rain) = α P(C, rain)?",
+          choices: [
+            "The total probability of clouds and rain combined.",
+            "A normalization constant to ensure the probabilities sum to 1.",
+            "A random probability constant.",
+            "The probability of no rain."
+          ],
+          answer: 1,
+          explanation: "Alpha is a normalization constant. When probabilities are first computed only up to proportionality, alpha rescales them so the final distribution sums to 1."
+        },
+        {
+          id: 4,
+          topic: "Week 8 Quiz Q4",
+          q: "What does it mean if two nodes in a Bayesian Network are conditionally independent?",
+          choices: [
+            "The probability of one node does not affect the other when given evidence about a third variable.",
+            "The nodes are not connected by any edge.",
+            "The nodes share the same parent in the network.",
+            "The nodes are fully independent of each other."
+          ],
+          answer: 0,
+          explanation: "Conditional independence means that once the evidence is known, one variable gives no extra information about the other."
+        },
+        {
+          id: 5,
+          topic: "Week 8 Quiz Q5",
+          q: "What is the main benefit of using a Bayesian Network for reasoning under uncertainty?",
+          choices: [
+            "It simplifies the computation of joint probabilities by breaking them into smaller, manageable components.",
+            "It guarantees independence between all variables in the model.",
+            "It eliminates the need for conditional probabilities.",
+            "It ensures all probabilities are equally distributed."
+          ],
+          answer: 0,
+          explanation: "A Bayesian Network breaks a large joint probability model into smaller local conditional probabilities, making uncertain reasoning much easier to compute."
+        },
+        {
+          id: 6,
+          topic: "Week 13 Quiz Q1",
+          q: "What is the core idea behind perceptron learning for classification?",
+          choices: [
+            "It relies only on k-nearest neighbors for majority voting",
+            "It uses non-linear boundaries to perfectly separate messy data without errors",
+            "It creates a linear decision boundary by adjusting weights via the perceptron learning rule to separate classes based on input features",
+            "It classifies new points solely by finding the single closest training example"
+          ],
+          answer: 2,
+          explanation: "Perceptron learning adjusts weights so the model forms a linear decision boundary that separates classes based on input features."
+        },
+        {
+          id: 7,
+          topic: "Week 13 Quiz Q2",
+          q: "In the perceptron hypothesis function, what does the weight vector w multiplied by the input vector x (including the bias term 1) produce?",
+          choices: [
+            "The distance to the nearest training point",
+            "The number of misclassified examples in the dataset",
+            "The exact probability of the output class",
+            "A value that is compared to 0 to decide the class (e.g., Rain if ≥ 0, No Rain otherwise)"
+          ],
+          answer: 3,
+          explanation: "The weighted sum, including the bias term, produces an activation value. The perceptron compares that value with 0 to choose the class."
+        },
+        {
+          id: 8,
+          topic: "Week 13 Quiz Q3",
+          q: "According to the perceptron learning rule, what happens to the weights when the model underestimates (predicts 0 but actual is 1)?",
+          choices: [
+            "All weights are reset to zero for a fresh start",
+            "The weights are decreased to reduce sensitivity to that input",
+            "The weights remain unchanged because the prediction was close enough",
+            "The weights are increased by α × xᵢ (where α is the learning rate), moving the decision boundary toward better classification"
+          ],
+          answer: 3,
+          explanation: "If the model predicts 0 when the true class is 1, it needs to increase the relevant weights so similar inputs are more likely to cross the decision threshold next time."
+        },
+        {
+          id: 9,
+          topic: "Week 13 Quiz Q4",
+          q: "What is a key limitation of the basic perceptron's threshold function?",
+          choices: [
+            "It uses a hard threshold (only 0 or 1 output), unable to express uncertainty or confidence levels",
+            "It always requires perfect linear separability of the data",
+            "It can only handle one-dimensional input data",
+            "It computes exact probabilities using a logistic function by default"
+          ],
+          answer: 0,
+          explanation: "The basic threshold output is hard and binary, so it does not express confidence or smooth uncertainty the way probabilistic outputs do."
+        },
+        {
+          id: 10,
+          topic: "Week 13 Quiz Q5",
+          q: "How does a logistic function improve upon the basic perceptron output?",
+          choices: [
+            "It provides a soft threshold, outputting a real number between 0 and 1 to represent confidence in the prediction",
+            "It eliminates the need for any weight updates during training",
+            "It classifies based on the majority vote of multiple perceptrons",
+            "It creates non-linear decision boundaries automatically"
+          ],
+          answer: 0,
+          explanation: "The logistic function gives a soft output between 0 and 1, which makes the model's confidence more interpretable than a strict 0-or-1 threshold."
+        },
+        {
+          id: 11,
+          topic: "Week 13 Quiz Q6",
+          q: "In the context of decision boundaries (as discussed with perceptrons and SVMs), what is the maximum margin separator?",
+          choices: [
+            "A curved boundary that perfectly fits all training data without errors",
+            "The boundary that passes exactly through the most data points",
+            "The boundary closest to as many training examples as possible",
+            "The boundary that maximizes distance from the closest points of each class, providing more leeway for new data variations"
+          ],
+          answer: 3,
+          explanation: "The maximum margin separator is the boundary that stays farthest from the nearest examples of both classes, which usually improves robustness to new data."
+        },
+        {
+          id: 12,
+          topic: "Week 13 Quiz Q7",
+          q: "In scikit-learn as shown in the notes, how is a perceptron model typically used?",
+          choices: [
+            "It is only for unsupervised clustering tasks",
+            "It requires manual implementation of the dot product and cannot use library functions",
+            "Correct: Imported from sklearn.linear_model import Perceptron and fitted like other classifiers (e.g., alongside SVM or k-NN) on labeled data",
+            "It automatically applies k-fold cross-validation without extra code"
+          ],
+          answer: 2,
+          explanation: "In scikit-learn, a perceptron is used like other supervised classifiers: import it, fit it on labeled training data, and then use it for prediction."
+        },
+        {
+          id: 13,
+          topic: "Week 13 Quiz Q8",
+          q: "Fill in the missing line to correctly implement the perceptron hypothesis function as described in the notes (dot product of weight vector w and input vector x, returning 1 if ≥ 0 else 0).",
+          code: `def perceptron_hypothesis(w, x):
+    # w = [w0 (bias), w1, w2, ...]
+    # x = [1 (bias term), x1, x2, ...]
+    dot_product = ____________________  # missing line
+    return 1 if dot_product >= 0 else 0`,
+          choices: [
+            "max(w[i] * x[i] for i in range(len(w)))",
+            "w[0] + sum(w[i] * x[i] for i in range(1, len(w)))",
+            "sum(w) * sum(x)",
+            "sum(wi * xi for wi, xi in zip(w, x))"
+          ],
+          answer: 3,
+          explanation: "The perceptron hypothesis is based on the dot product between weights and inputs, so `sum(wi * xi for wi, xi in zip(w, x))` is the correct missing line."
+        },
+        {
+          id: 14,
+          topic: "Week 13 Quiz Q9",
+          q: "Complete the weight update according to the perceptron learning rule from the notes.",
+          code: `def update_weights(w, x, y, prediction, alpha=1.0):
+    error = y - prediction  # y is actual (1 or 0), prediction is hypothesis output
+    for i in range(len(w)):
+        w[i] = ____________________  # missing update
+    return w`,
+          choices: [
+            "w[i] * alpha * error * x[i]",
+            "w[i] + alpha * (y - prediction)",
+            "w[i] + alpha * error * x[i]",
+            "w[i] - alpha * error * x[i]"
+          ],
+          answer: 2,
+          explanation: "The perceptron update rule adds `alpha * error * x[i]` to each weight, pushing the decision boundary in the direction that reduces the current mistake."
+        },
+        {
+          id: 15,
+          topic: "Week 14 Quiz Q1",
+          q: "What is the main purpose of an activation function in a neural network unit?",
+          choices: [
+            "It only normalizes the input values between 0 and 1",
+            "It stores the training data for later retrieval",
+            "It directly computes the final classification without any weights",
+            "It introduces non-linearity and decides whether/how strongly a unit should \"fire\" based on the weighted sum + bias"
+          ],
+          answer: 3,
+          explanation: "Activation functions decide how strongly a neuron responds to its weighted input, and they introduce the non-linearity that makes deep networks useful."
+        },
+        {
+          id: 16,
+          topic: "Week 14 Quiz Q2",
+          q: "Which activation function outputs values between 0 and 1 and is commonly used in the output layer for binary classification?",
+          choices: [
+            "Step function",
+            "Sigmoid (logistic function)",
+            "Softmax",
+            "ReLU"
+          ],
+          answer: 1,
+          explanation: "Sigmoid outputs values strictly between 0 and 1, so it is a natural choice when the model needs to represent a binary class probability."
+        },
+        {
+          id: 17,
+          topic: "Week 14 Quiz Q3",
+          q: "What does a hidden layer do in a multilayer neural network?",
+          choices: [
+            "It directly receives the final predictions from the output layer",
+            "It only performs linear transformations without activation",
+            "It allows the network to model non-linear relationships by transforming inputs before reaching the output layer",
+            "It stores the original raw input data unchanged"
+          ],
+          answer: 2,
+          explanation: "Hidden layers transform the input through intermediate representations, allowing the network to capture non-linear patterns before the final output layer."
+        },
+        {
+          id: 18,
+          topic: "Week 14 Quiz Q4",
+          q: "What is the role of backpropagation?",
+          choices: [
+            "It forwards data from input to output without error calculation",
+            "It calculates gradients starting from the output error and propagates them backward to update weights in all layers",
+            "It randomly assigns weights without using gradients",
+            "It only updates weights in the input layer"
+          ],
+          answer: 1,
+          explanation: "Backpropagation computes gradients by moving backward from the output error through the network so all layer weights can be updated efficiently."
+        },
+        {
+          id: 19,
+          topic: "Week 14 Quiz Q5",
+          q: "In a Convolutional Neural Network (CNN), what does Max-Pooling do?",
+          choices: [
+            "It increases the number of features",
+            "It flattens the entire image into a single vector",
+            "It applies edge detection filters",
+            "It reduces the spatial size of the representation by taking the maximum value in each region"
+          ],
+          answer: 3,
+          explanation: "Max-pooling reduces spatial size by taking the largest activation in each local region, which keeps strong features while shrinking the representation."
+        },
+        {
+          id: 20,
+          topic: "Week 14 Quiz Q6",
+          q: "What is the key difference between feed-forward and recurrent neural networks?",
+          choices: [
+            "Recurrent networks use their own previous outputs as inputs, making them suitable for sequences",
+            "Feed-forward networks use backpropagation while recurrent do not",
+            "Recurrent networks only work with images",
+            "Feed-forward networks cannot have hidden layers"
+          ],
+          answer: 0,
+          explanation: "Recurrent networks feed information from earlier time steps back into later computation, which is why they are useful for sequence data."
+        },
+        {
+          id: 21,
+          topic: "Week 14 Quiz Q7",
+          q: "What does the Adam optimizer do in the model compilation step?",
+          choices: [
+            "It performs data augmentation on images",
+            "It is an optimization algorithm that adjusts learning rates adaptively to minimize the loss during training",
+            "It calculates the loss function",
+            "It is a type of activation function"
+          ],
+          answer: 1,
+          explanation: "Adam is an optimizer. Its job is to update weights during training using adaptive learning-rate ideas to reduce the loss."
+        },
+        {
+          id: 22,
+          topic: "Week 14 Quiz Q8",
+          q: "Complete the code to build a neural network for the banknotes classification task.",
+          code: `import tensorflow as tf
+
+model = tf.keras.models.Sequential()
+
+# Add a hidden layer
+model.add(tf.keras.layers.Dense(____________,
+      input_shape=(4,), activation="relu"))
+
+# Add the output layer
+model.add(tf.keras.layers.Dense(1, activation="________"))`,
+          choices: [
+            "16 and tanh",
+            "1 and softmax",
+            "4 and relu",
+            "8 and sigmoid"
+          ],
+          answer: 3,
+          explanation: "The example uses 8 hidden units with a sigmoid output because the task is binary classification with one final output node."
+        },
+        {
+          id: 23,
+          topic: "Week 14 Quiz Q9",
+          q: "Fill in the missing arguments for compiling the model (as shown in the TensorFlow banknotes example).",
+          code: `model.compile(
+    optimizer="____",
+    loss="___________________",
+    metrics=["accuracy"]
+)`,
+          choices: [
+            "adam and binary_crossentropy",
+            "sgd and mean_squared_error",
+            "rmsprop and binary_crossentropy",
+            "adam and categorical_crossentropy"
+          ],
+          answer: 0,
+          explanation: "For a binary classification model with one sigmoid output, `adam` and `binary_crossentropy` are the standard optimizer and loss combination."
+        },
+        {
+          id: 24,
+          topic: "Week 14 Quiz Q10",
+          q: "Complete the Conv2D layer configuration for the MNIST handwritten digits model.",
+          code: `model = tf.keras.models.Sequential([
+    tf.keras.layers.Conv2D(
+        ____, (3, 3), activation="relu", input_shape=(28, 28, 1)
+    ),
+    tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+    # ... rest of the model
+])`,
+          choices: [
+            "1",
+            "64",
+            "16",
+            "32"
+          ],
+          answer: 3,
+          explanation: "The MNIST example starts with 32 filters in the first Conv2D layer, which is a common small CNN setup for extracting image features."
+        },
+        {
+          id: 25,
+          topic: "Chapter 12 Study",
+          q: "What does unconditional probability describe?",
+          choices: [
+            "A degree of belief in a proposition without any other evidence",
+            "A probability after all hidden variables are eliminated",
+            "A probability that must depend on a parent node",
+            "A guaranteed frequency in every finite sample"
+          ],
+          answer: 0,
+          explanation: "Unconditional probability refers to belief in an event before conditioning on additional evidence."
+        },
+        {
+          id: 26,
+          topic: "Chapter 12 Study",
+          q: "What does conditional probability measure?",
+          choices: [
+            "The probability of an event across all possible worlds with no evidence",
+            "The degree of belief in a proposition given that some evidence has been revealed",
+            "The probability of two independent events occurring together",
+            "The count of favorable outcomes divided by the number of variables"
+          ],
+          answer: 1,
+          explanation: "Conditional probability updates belief after taking known evidence into account."
+        },
+        {
+          id: 27,
+          topic: "Chapter 12 Study",
+          q: "Which formula correctly defines conditional probability?",
+          choices: [
+            "P(a | b) = P(a and b) / P(b)",
+            "P(a | b) = P(a) / P(b)",
+            "P(a | b) = P(a or b) / P(b)",
+            "P(a | b) = P(b | a) / P(a)"
+          ],
+          answer: 0,
+          explanation: "By definition, conditional probability is the joint probability of a and b normalized by the probability of b."
+        },
+        {
+          id: 28,
+          topic: "Chapter 12 Study",
+          q: "Why is Bayes' Rule especially useful in AI reasoning?",
+          choices: [
+            "It lets us convert P(cause | effect) into P(effect | cause) with priors and evidence",
+            "It guarantees that evidence variables are independent",
+            "It removes the need for normalization constants",
+            "It only works for deterministic systems"
+          ],
+          answer: 0,
+          explanation: "Bayes' Rule is valuable because we often know how causes produce effects and want to infer the hidden cause from an observed effect."
+        },
+        {
+          id: 29,
+          topic: "Chapter 12 Study",
+          q: "In the clouds and rain example from the lecture, what is P(rain | clouds) if P(clouds | rain) = 0.8, P(rain) = 0.1, and P(clouds) = 0.4?",
+          choices: ["0.8", "0.2", "0.4", "0.02"],
+          answer: 1,
+          explanation: "Applying Bayes' Rule gives (0.8 * 0.1) / 0.4 = 0.2."
+        },
+        {
+          id: 30,
+          topic: "Chapter 12 Study",
+          q: "What is a random variable?",
+          choices: [
+            "A number selected uniformly from 0 to 1",
+            "A variable in probability theory with a domain of possible values it can take on",
+            "A proposition that is always either true or false with no uncertainty",
+            "A hidden variable that must belong to a Bayesian Network"
+          ],
+          answer: 1,
+          explanation: "A random variable is any variable whose possible values are governed by a probability distribution."
+        },
+        {
+          id: 31,
+          topic: "Chapter 12 Study",
+          q: "What does a probability distribution over a random variable tell you?",
+          choices: [
+            "The order in which outcomes occur",
+            "The causal structure between variables",
+            "The probability assigned to each possible value of that variable",
+            "The exact next outcome in time"
+          ],
+          answer: 2,
+          explanation: "A probability distribution assigns a probability to each value in the variable's domain."
+        },
+        {
+          id: 32,
+          topic: "Chapter 12 Study",
+          q: "If two events are independent, what should be true?",
+          choices: [
+            "P(a and b) = P(a) + P(b)",
+            "P(a and b) = P(a)P(b)",
+            "P(a | b) = 0",
+            "P(a) must equal P(b)"
+          ],
+          answer: 1,
+          explanation: "Independence means the occurrence of one event does not change the probability of the other, so the joint factors."
+        },
+        {
+          id: 33,
+          topic: "Chapter 12 Study",
+          q: "Which probability rule matches inclusion-exclusion?",
+          choices: [
+            "P(not a) = 1 - P(a)",
+            "P(a or b) = P(a) + P(b) - P(a and b)",
+            "P(a) = P(a, b) + P(a, not b)",
+            "P(a | b) = P(a and b) / P(a)"
+          ],
+          answer: 1,
+          explanation: "Inclusion-exclusion avoids double-counting the overlap between a and b."
+        },
+        {
+          id: 34,
+          topic: "Chapter 12 Study",
+          q: "What does marginalization do?",
+          choices: [
+            "It converts a Bayesian Network into a truth table",
+            "It sums out other variables to recover the probability of a variable of interest",
+            "It replaces priors with posteriors",
+            "It makes all events independent"
+          ],
+          answer: 1,
+          explanation: "Marginalization adds over the unwanted variable values to leave the probability you care about."
+        },
+        {
+          id: 35,
+          topic: "Chapter 12 Study",
+          q: "What is a Bayesian Network?",
+          choices: [
+            "A truth table that lists every possible world explicitly",
+            "A directed graph representing dependencies among random variables, with local conditional probability tables",
+            "A neural network that predicts probabilities",
+            "A search tree used for minimax"
+          ],
+          answer: 1,
+          explanation: "A Bayesian Network is a probabilistic graphical model whose nodes are random variables and whose edges capture direct dependencies."
+        },
+        {
+          id: 36,
+          topic: "Chapter 12 Study",
+          q: "In a Bayesian Network, what does an arrow from X to Y mean?",
+          choices: [
+            "X and Y are independent",
+            "Y is a parent of X",
+            "X is a parent of Y",
+            "X and Y must have the same domain"
+          ],
+          answer: 2,
+          explanation: "The lecture uses arrows to indicate parent-to-child dependence, so X is a parent of Y."
+        },
+        {
+          id: 37,
+          topic: "Chapter 12 Study",
+          q: "When computing a joint probability from a Bayesian Network, what is the basic idea?",
+          choices: [
+            "Add the node probabilities together",
+            "Multiply the local conditional probabilities for each variable given its parents",
+            "Ignore hidden variables entirely",
+            "Use only the prior on the query variable"
+          ],
+          answer: 1,
+          explanation: "The full joint distribution factors into the product of each node's probability conditioned on its parents."
+        },
+        {
+          id: 38,
+          topic: "Chapter 12 Study",
+          q: "In inference, what are hidden variables?",
+          choices: [
+            "Variables that are both the query and the evidence",
+            "Observed variables whose values are fixed by the evidence",
+            "Variables that are neither the query variable nor evidence variables",
+            "Variables that have no parents in the network"
+          ],
+          answer: 2,
+          explanation: "Hidden variables are the remaining variables that must be summed out during inference."
+        },
+        {
+          id: 39,
+          topic: "Chapter 12 Study",
+          q: "What is the goal of inference by enumeration?",
+          choices: [
+            "To compute P(X | e) by summing over hidden variables and then normalizing",
+            "To estimate weights in a neural network",
+            "To remove the need for conditional probabilities",
+            "To find the shortest path in a search graph"
+          ],
+          answer: 0,
+          explanation: "Inference by enumeration expands the relevant joint probabilities, sums over hidden variables, and normalizes the result."
+        }
+      ];
       const EXAMS = {
         mlo1: {
           label: "MLO1",
@@ -3662,6 +4199,12 @@ int fun2(int n) {
           emptyState: "The AI quiz tab is ready. Send the quiz PDFs with their questions and answers, and I will build this section into a study set like the MLO tabs.",
           questions: AI_QUESTIONS
         },
+        aiFinal: {
+          label: "AI Final Exam",
+          notice: "quiz questions from Weeks 8, 13, and 14 are listed first here, followed by a Chapter 12 lecture study section on probability, Bayes' Rule, Bayesian Networks, and inference.",
+          emptyState: "The AI Final Exam tab is ready for the final quiz and lecture study material.",
+          questions: AI_FINAL_QUESTIONS
+        },
         aiStudy: {
           label: "AI - Study",
           notice: "concept-focused AI study questions are now loaded from your chapter PDFs, lecture logic slides, midterm notes, and CSP coverage from class topics.",
@@ -3673,7 +4216,7 @@ int fun2(int n) {
         activeExam: "mlo1",
         studyMode: false,
         showAllExplanations: false,
-        answers: { mlo1: {}, mlo2: {}, mlo3: {}, mlo4: {}, ai: {}, aiStudy: {} }
+        answers: { mlo1: {}, mlo2: {}, mlo3: {}, mlo4: {}, ai: {}, aiFinal: {}, aiStudy: {} }
       };
       const quizRoot = document.getElementById("quizRoot");
       const jumpNav = document.getElementById("jumpNav");
@@ -3687,6 +4230,7 @@ int fun2(int n) {
       const mlo3Btn = document.getElementById("mlo3Btn");
       const mlo4Btn = document.getElementById("mlo4Btn");
       const aiBtn = document.getElementById("aiBtn");
+      const aiFinalBtn = document.getElementById("aiFinalBtn");
       const aiStudyBtn = document.getElementById("aiStudyBtn");
       const noticeTitle = document.getElementById("noticeTitle");
       const noticeText = document.getElementById("noticeText");
@@ -3798,6 +4342,7 @@ int fun2(int n) {
         mlo3Btn.classList.toggle("active", state.activeExam === "mlo3");
         mlo4Btn.classList.toggle("active", state.activeExam === "mlo4");
         aiBtn.classList.toggle("active", state.activeExam === "ai");
+        aiFinalBtn.classList.toggle("active", state.activeExam === "aiFinal");
         aiStudyBtn.classList.toggle("active", state.activeExam === "aiStudy");
         renderJumpNav();
         updateScore();
@@ -3940,6 +4485,11 @@ int fun2(int n) {
 
       aiBtn.addEventListener("click", () => {
         state.activeExam = "ai";
+        render();
+      });
+
+      aiFinalBtn.addEventListener("click", () => {
+        state.activeExam = "aiFinal";
         render();
       });
 
